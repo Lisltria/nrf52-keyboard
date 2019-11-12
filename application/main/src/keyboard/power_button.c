@@ -23,6 +23,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <stdint.h>
 #include <string.h>
 
+#ifdef POWER_BUTTON
 APP_TIMER_DEF(button_timer_id);
 uint8_t button_count = 0;
 
@@ -61,7 +62,7 @@ static void buttons_timers_init(void)
     err_code = app_timer_create(&button_timer_id, APP_TIMER_MODE_REPEATED, button_handler);
     APP_ERROR_CHECK(err_code);
 }
-
+#endif
 /**
 * @brief 初始化POWER_BUTTON按钮
  * 
