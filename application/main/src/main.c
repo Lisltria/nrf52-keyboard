@@ -99,8 +99,6 @@
 
 #define DEAD_BEEF 0xDEADBEEF /**< Value used as error code on stack dump, can be used to identify stack location on stack unwind. */
 
-#define SCHED_MAX_EVENT_DATA_SIZE APP_TIMER_SCHED_EVENT_DATA_SIZE /**< Maximum size of scheduler events. */
-#define SCHED_QUEUE_SIZE 100 /**< Maximum number of events in the scheduler queue. More is needed in case of Serialization. */
 
 /**@brief Callback function for asserts in the SoftDevice.
  *
@@ -280,13 +278,6 @@ void sleep(enum SLEEP_REASON reason)
     }
 }
 
-/**@brief Function for the Event Scheduler initialization.
- */
-static void scheduler_init(void)
-{
-    APP_SCHED_INIT(SCHED_MAX_EVENT_DATA_SIZE, SCHED_QUEUE_SIZE);
-}
-
 /**@brief Function for initializing power management.
  */
 static void power_management_init(void)
@@ -304,7 +295,6 @@ static void power_management_init(void)
  */
 static void idle_state_handle(void)
 {
-    app_sched_execute();
     nrf_pwr_mgmt_run();
 }
 
@@ -319,7 +309,6 @@ int main(void)
     power_management_init();
 
     ble_stack_init();
-    scheduler_init();
     services_init();
     if (!eeconfig_is_enabled()) {
         eeconfig_init();
