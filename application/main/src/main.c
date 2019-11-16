@@ -102,13 +102,6 @@
 
 #define DEAD_BEEF 0xDEADBEEF /**< Value used as error code on stack dump, can be used to identify stack location on stack unwind. */
 
-#define SCHED_MAX_EVENT_DATA_SIZE APP_TIMER_SCHED_EVENT_DATA_SIZE /**< Maximum size of scheduler events. */
-#ifdef SVCALL_AS_NORMAL_FUNCTION
-#define SCHED_QUEUE_SIZE 30 /**< Maximum number of events in the scheduler queue. More is needed in case of Serialization. */
-#else
-#define SCHED_QUEUE_SIZE 20 /**< Maximum number of events in the scheduler queue. */
-#endif
-
 static void set_stage(enum keyboard_state stage)
 {
     trig_event_param(USER_EVT_STAGE, stage);
@@ -299,13 +292,6 @@ void sleep(enum SLEEP_REASON reason)
     }
 }
 
-/**@brief Function for the Event Scheduler initialization.
- */
-static void scheduler_init(void)
-{
-    APP_SCHED_INIT(SCHED_MAX_EVENT_DATA_SIZE, SCHED_QUEUE_SIZE);
-}
-
 /**@brief Function for initializing power management.
  */
 static void power_management_init(void)
@@ -323,7 +309,6 @@ static void power_management_init(void)
  */
 static void idle_state_handle(void)
 {
-    app_sched_execute();
     execute_event();
     nrf_pwr_mgmt_run();
 }
@@ -341,7 +326,6 @@ int main(void)
     set_stage(KBD_STATE_PRE_INIT);
 
     ble_stack_init();
-    scheduler_init();
     services_init();
     ble_keyboard_init();
 

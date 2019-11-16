@@ -1290,7 +1290,7 @@
  
 
 #ifndef BLE_DFU_ENABLED
-#define BLE_DFU_ENABLED 1
+#define BLE_DFU_ENABLED 0
 #endif
 
 // <q> NRF_DFU_BLE_BUTTONLESS_SUPPORTS_BONDS  - Buttonless DFU supports bonds.
@@ -2236,7 +2236,7 @@
  
 
 #ifndef NRFX_PRS_BOX_2_ENABLED
-#define NRFX_PRS_BOX_2_ENABLED 1
+#define NRFX_PRS_BOX_2_ENABLED 0
 #endif
 
 // <q> NRFX_PRS_BOX_3_ENABLED  - Enables box 3 in the module.
@@ -2316,6 +2316,20 @@
 
 #ifndef NRFX_PWM0_ENABLED
 #define NRFX_PWM0_ENABLED 0
+#endif
+
+// <q> NRFX_PWM1_ENABLED  - Enable PWM1 instance
+ 
+
+#ifndef NRFX_PWM1_ENABLED
+#define NRFX_PWM1_ENABLED 0
+#endif
+
+// <q> NRFX_PWM2_ENABLED  - Enable PWM2 instance
+ 
+
+#ifndef NRFX_PWM2_ENABLED
+#define NRFX_PWM2_ENABLED 0
 #endif
 
 // <o> NRFX_PWM_DEFAULT_CONFIG_OUT0_PIN - Out0 pin  <0-31> 
@@ -5482,7 +5496,7 @@
  
 
 #ifndef APP_TIMER_CONFIG_USE_SCHEDULER
-#define APP_TIMER_CONFIG_USE_SCHEDULER 1
+#define APP_TIMER_CONFIG_USE_SCHEDULER 0
 #endif
 
 // <q> APP_TIMER_KEEPS_RTC_ACTIVE  - Enable RTC always on
@@ -9921,7 +9935,7 @@
  
 
 #ifndef NRF_SDH_BLE_SERVICE_CHANGED
-#define NRF_SDH_BLE_SERVICE_CHANGED 0
+#define NRF_SDH_BLE_SERVICE_CHANGED 1
 #endif
 
 // </h> 
@@ -10395,7 +10409,7 @@
 // <2=> NRF_SDH_DISPATCH_MODEL_POLLING 
 
 #ifndef NRF_SDH_DISPATCH_MODEL
-#define NRF_SDH_DISPATCH_MODEL 1
+#define NRF_SDH_DISPATCH_MODEL 0
 #endif
 
 // </h> 
