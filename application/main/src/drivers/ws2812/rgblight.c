@@ -155,9 +155,10 @@ void rgblight_init(void)
         eeconfig_update_rgblight_default();
     }
     rgblight_config.raw = eeconfig_read_rgblight();
+    wait_ms(1);
     if (!rgblight_config.mode) {
         eeconfig_update_rgblight_default();
-        rgblight_config.raw = eeconfig_read_rgblight();
+    //rgblight_config.raw = eeconfig_read_rgblight();
     }
 
 #ifdef RGBLIGHT_ANIMATIONS
@@ -330,6 +331,7 @@ void rgblight_disable(void)
 {
     rgblight_config.enable = 0;
     eeconfig_update_rgblight(rgblight_config.raw);
+    wait_ms(1);
 #ifdef RGBLIGHT_ANIMATIONS
     rgblight_timer_disable();
 #endif
@@ -567,7 +569,7 @@ void rgblight_sleep_prepare(void)
 {
     // 禁用RGB LED
     rgblight_disable_noeeprom();
-    wait_ms(50);
+    wait_ms(1);
     nrf_gpio_cfg_default(RGB_DI_PIN);
 }
 
