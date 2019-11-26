@@ -27,7 +27,7 @@
 #include <ble_keyboard.h>
 
 #ifndef RGBLIGHT_LIMIT_VAL
-#define RGBLIGHT_LIMIT_VAL 255
+#define RGBLIGHT_LIMIT_VAL 240
 #endif
 
 #ifndef MIN
