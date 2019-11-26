@@ -112,6 +112,17 @@ action_t action_for_key(uint8_t layer, keypos_t key)
                 return keycode_to_action(KC_BSLASH);
             }
             return keycode_to_action(KC_BSPACE);
+#else
+        case KC_LGUI:
+            if (keyboard_no_gui) {
+                return keycode_to_action(KC_NO);
+            }
+            return keycode_to_action(KC_LGUI);
+        case KC_RGUI:
+            if (keyboard_no_gui) {
+                return keycode_to_action(KC_NO);
+            }
+            return keycode_to_action(KC_RGUI);
 #endif
         default:
             return keycode_to_action(keycode);
