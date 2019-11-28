@@ -23,10 +23,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <stdbool.h>
 #include "config.h"
 
+#ifdef CHARGING_DETECT
 #ifdef PIN_STANDBY
 #define IS_CHARGING (PIN_CHARGING && !PIN_STANDBY)
 #else
 #define IS_CHARGING (PIN_CHARGING)
+#endif
 #endif
 
 uart_state uart_rx_state;
@@ -84,7 +86,7 @@ void uart_init()
     U1SM0 = 0; // 8Bit
     U1SMOD = 1; // fast mode
     U1REN = 1; //串口0接收使能
-    SBAUD1 = 256 - CH55X_FREQ_SYS / 16 / UART0_BUAD;
+    SBAUD1 = 256 - CH55X_FREQ_SYS / 16 / UART0_BUAD & 0xFF;
     IE_UART1 = 1; //启用串口中断
 }
 
@@ -122,8 +124,10 @@ static void uart_data_parser(void)
 static void uart_send_status()
 {
     uint8_t data = 0x10;
+    #ifdef CHARGING_DETECT
     if (!IS_CHARGING) // 是否充满
         data |= 0x02;
+    #endif
     if (usb_ready) // 是否连接主机
         data |= 0x04;
     if (keyboard_protocol)
