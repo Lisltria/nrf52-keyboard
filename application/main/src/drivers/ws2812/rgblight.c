@@ -147,6 +147,26 @@ void eeconfig_update_rgblight_default(void)
 void eeconfig_debug_rgblight(void)
 {
 }
+//开启RGB电源
+void rgb_pwr_on(void)
+{
+#ifdef RGB_PWR_PIN
+        nrf_gpio_pin_write(RGB_PWR_PIN, 0);
+#endif
+#ifdef RGB_PWR_PIN_REVERSE
+        nrf_gpio_pin_write(RGB_PWR_PIN_REVERSE, 1);
+#endif
+}
+//关闭RGB电源
+void rgb_pwr_off(void)
+{
+#ifdef RGB_PWR_PIN
+        nrf_gpio_pin_write(RGB_PWR_PIN, 1);
+#endif
+#ifdef RGB_PWR_PIN_REVERSE
+        nrf_gpio_pin_write(RGB_PWR_PIN_REVERSE, 0);
+#endif
+}
 
 void rgblight_init(void)
 {
@@ -155,7 +175,7 @@ void rgblight_init(void)
         eeconfig_update_rgblight_default();
     }
     rgblight_config.raw = eeconfig_read_rgblight();
-    wait_ms(1);
+    wait_ms(2);
     if (!rgblight_config.mode) {
         eeconfig_update_rgblight_default();
     //rgblight_config.raw = eeconfig_read_rgblight();
@@ -164,9 +184,18 @@ void rgblight_init(void)
 #ifdef RGBLIGHT_ANIMATIONS
     rgblight_timer_init(); // setup the timer
 #endif
-
+//初始化RGB power控制脚
+#ifdef RGB_PWR_PIN
+    nrf_gpio_cfg_output(RGB_PWR_PIN);
+#endif
+#ifdef RGB_PWR_PIN_REVERSE
+    nrf_gpio_cfg_output(RGB_PWR_PIN_REVERSE);
+#endif
     if (rgblight_config.enable) {
         rgblight_mode_noeeprom(rgblight_config.mode);
+        rgb_pwr_on();
+    } else {
+        rgb_pwr_off();
     }
 }
 
@@ -302,12 +331,7 @@ void rgblight_toggle_noeeprom(void)
 
 void rgblight_enable(void)
 {
-#ifdef RGB_PWR_PIN
-    nrf_gpio_pin_write(RGB_PWR_PIN,1);
-#endif
-#ifdef RGB_PWR_PIN_REVERSE
-    nrf_gpio_pin_write(RGB_PWR_PIN_REVERSE,0);
-#endif
+    rgb_pwr_on();
     rgblight_config.enable = 1;
     // No need to update EEPROM here. rgblight_mode() will do that, actually
     //eeconfig_update_rgblight(rgblight_config.raw);
@@ -317,12 +341,7 @@ void rgblight_enable(void)
 
 void rgblight_enable_noeeprom(void)
 {
-#ifdef RGB_PWR_PIN
-    nrf_gpio_pin_write(RGB_PWR_PIN,1);
-#endif
-#ifdef RGB_PWR_PIN_REVERSE
-    nrf_gpio_pin_write(RGB_PWR_PIN_REVERSE,0);
-#endif
+    rgb_pwr_on();
     rgblight_config.enable = 1;
     rgblight_mode_noeeprom(rgblight_config.mode);
 }
@@ -336,12 +355,7 @@ void rgblight_disable(void)
     rgblight_timer_disable();
 #endif
     rgblight_set();
-#ifdef RGB_PWR_PIN
-        nrf_gpio_pin_write(RGB_PWR_PIN,0);
-#endif
-#ifdef RGB_PWR_PIN_REVERSE
-        nrf_gpio_pin_write(RGB_PWR_PIN_REVERSE,1);
-#endif
+    rgb_pwr_off();
 }
 
 void rgblight_disable_noeeprom(void)
@@ -351,12 +365,7 @@ void rgblight_disable_noeeprom(void)
     rgblight_timer_disable();
 #endif
     rgblight_set();
-#ifdef RGB_PWR_PIN
-        nrf_gpio_pin_write(RGB_PWR_PIN,0);
-#endif
-#ifdef RGB_PWR_PIN_REVERSE
-        nrf_gpio_pin_write(RGB_PWR_PIN_REVERSE,1);
-#endif
+    rgb_pwr_off();
 }
 
 // Deals with the messy details of incrementing an integer
@@ -571,6 +580,12 @@ void rgblight_sleep_prepare(void)
     rgblight_disable_noeeprom();
     wait_ms(1);
     nrf_gpio_cfg_default(RGB_DI_PIN);
+#ifdef RGB_PWR_PIN
+    nrf_gpio_cfg_default(RGB_PWR_PIN);
+#endif
+#ifdef RGB_PWR_PIN_REVERSE
+    nrf_gpio_cfg_default(RGB_PWR_PIN_REVERSE);
+#endif
 }
 
 #ifdef RGBLIGHT_ANIMATIONS
