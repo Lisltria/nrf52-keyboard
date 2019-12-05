@@ -20,6 +20,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "config.h"
 #include "nrf_gpio.h"
 #include "bootloader.h"
+#include "ble_services.h"
+#include "eeconfig.h"
 #include <stdint.h>
 #include <string.h>
 
@@ -40,14 +42,23 @@ static void button_handler(void *p_context)
         button_count++;
         return;
     } else {
-        if (button_count > 0 && button_count <= 2) {
+        //1~2秒关机
+        if (button_count > 1 && button_count <= 4) {
             button_count = 0;
             systemoff();
         }
-        if (button_count >= 3) {
+        //2~9秒启动DFU
+        if (button_count > 4 && button_count <= 19) {
             button_count = 0;
             bootloader_jump();
         }
+        //9秒以上重置
+        if (button_count > 19) {
+            button_count = 0;
+            delete_bonds();
+            eeconfig_init();
+        }
+        //上述判断最大误差0.5秒
     }
 }
 
@@ -74,7 +85,7 @@ void buttons_init(void)
                              NRF_GPIO_PIN_PULLUP,
                              NRF_GPIO_PIN_SENSE_LOW);
     buttons_timers_init();
-    app_timer_start(button_timer_id, APP_TIMER_TICKS(1000), NULL);
+    app_timer_start(button_timer_id, APP_TIMER_TICKS(500), NULL);
 #endif
 }
 
