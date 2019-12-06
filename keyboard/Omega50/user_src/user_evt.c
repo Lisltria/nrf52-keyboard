@@ -103,10 +103,10 @@ static void led_status_change()
 
 #endif
 #ifdef LED_BLE
-        if (ble_connected) {
-            status_led_set_val(LED_BIT_BLE, 1);
-        } else {
+        if (usb_working()) {
             status_led_set_val(LED_BIT_BLE, 0);
+        } else {
+            status_led_set_val(LED_BIT_BLE, 1);
         }
 #endif
         status_led_set();
