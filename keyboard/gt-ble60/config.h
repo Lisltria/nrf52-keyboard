@@ -98,6 +98,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define LED_BLE 20
 #define LED_CHARGING 19
 #define LED_USB 27
+#define BLE_LED_1 LED_CHARGING
+#define BLE_LED_2 LED_BLE
+#define BLE_LED_3 LED_USB
 
 // 独立硬件按钮
 #define POWER_BUTTON 9

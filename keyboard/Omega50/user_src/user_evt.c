@@ -160,6 +160,7 @@ void custom_event_handler(enum user_ble_event arg)
         status = kbd_usb;
         led_status_change();
         break;
+#ifdef CHARGING_DETECT
     case USER_BAT_CHARGING:
         charging_full = false;
         led_status_change();
@@ -168,6 +169,7 @@ void custom_event_handler(enum user_ble_event arg)
         charging_full = true;
         led_status_change();
         break;
+#endif
     case USER_BLE_DISCONNECT:
         ble_connected = false;
         led_status_change();
