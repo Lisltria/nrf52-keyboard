@@ -50,7 +50,7 @@ bool command_proc(uint8_t code)
         case ONESHOT:
             if (!IS_COMMAND())
                 return false;
-            return (command_extra(code) || command_common(code));
+            return (command_extra(code) || command_common(code) || command_user(code));
             break;
         default:
             command_state = ONESHOT;
@@ -67,7 +67,12 @@ bool command_extra(uint8_t code)
     (void)code;
     return false;
 }
-
+bool command_user(uint8_t code) __attribute__ ((weak));
+bool command_user(uint8_t code)
+{
+    (void)code;
+    return false;
+}
 
 /***********************************************************
  * Command common
