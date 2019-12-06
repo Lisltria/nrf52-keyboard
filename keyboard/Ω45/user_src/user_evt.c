@@ -15,6 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+#ifdef STATUS_LED_ENABLE
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -122,7 +123,6 @@ void custom_event_handler(enum user_ble_event arg)
     switch (arg) {
     case USER_EVT_POST_INIT:
         status_led_init();
-        command_timer_init();
         status_led_display();
         nrf_delay_ms(200);
         break;
@@ -180,3 +180,4 @@ void custom_event_handler(enum user_ble_event arg)
         break;
     }
 }
+#endif

@@ -19,7 +19,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "action_util.h"
 #include "ble_services.h"
 #include "main.h"
+#ifdef STATUS_LED_ENABLE
 #include "status_led.h"
+#endif
 #include "usb_comm.h"
 #include "ble_bas_service.h"
 
@@ -64,11 +66,13 @@ void action_function(keyrecord_t* record, uint8_t id, uint8_t opt)
         }
         break;
     case AF_LED_DISPLAY:
+#ifdef STATUS_LED_ENABLE
         if (!record->event.pressed) {
             if (!usb_working()) {
                 status_led_display();
             }
         }
+#endif
         break;
     case AF_TRICKY_ESC:
         if (record->event.pressed) {

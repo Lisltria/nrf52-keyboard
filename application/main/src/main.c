@@ -89,6 +89,7 @@
 #include "power_button.h"
 
 #include "keyboard/ble_keyboard.h"
+#include "keyboard/keyboard_command.h"
 #include "keyboard/keyboard_led.h"
 #include "keyboard/keyboard_matrix.h"
 #include "keyboard/passkey.h"
@@ -98,7 +99,6 @@
 #endif
 
 #define DEAD_BEEF 0xDEADBEEF /**< Value used as error code on stack dump, can be used to identify stack location on stack unwind. */
-
 
 /**@brief Callback function for asserts in the SoftDevice.
  *
@@ -344,6 +344,9 @@ int main(void)
     advertising_start(erase_bonds);
 #ifdef RGBLIGHT_ENABLE
     rgblight_init();
+#endif
+#ifdef COMMAND_ENABLE
+    command_timer_init();
 #endif
     ble_user_event(USER_EVT_INITED);
 

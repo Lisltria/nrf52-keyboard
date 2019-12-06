@@ -32,7 +32,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "rgblight.h"
 #endif
 #include "eeconfig.h"
+#ifdef STATUS_LED_ENABLE
 #include "status_led.h"
+#endif
 #include "usb_comm.h"
 #include "util.h"
 #include "wait.h"
@@ -126,6 +128,7 @@ bool command_extra(uint8_t code)
         usb_comm_switch();
 #endif
         break;
+#ifdef STATUS_LED_ENABLE
     case KC_L:
     case KC_SLSH:
         //显示状态灯
@@ -134,6 +137,7 @@ bool command_extra(uint8_t code)
             status_led_display();
         }
         break;
+#endif
     case KC_O:
         //清空绑定数据
         clear_keyboard();
