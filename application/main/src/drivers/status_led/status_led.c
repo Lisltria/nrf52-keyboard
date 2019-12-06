@@ -43,6 +43,9 @@ void status_led_init()
 #ifdef LED_CHARGING
     nrf_gpio_cfg_output(LED_CHARGING);
 #endif
+#ifdef LED_USER
+    nrf_gpio_cfg_output(LED_USER);
+#endif
 }
 
 /**
@@ -59,6 +62,9 @@ void status_led_deinit(void)
 #endif
 #ifdef LED_CHARGING
     nrf_gpio_cfg_default(LED_CHARGING);
+#endif
+#ifdef LED_USER
+    nrf_gpio_cfg_default(LED_USER);
 #endif
 }
 
@@ -78,6 +84,9 @@ static void status_led_set_internal(uint8_t status_led_val)
 #endif
 #ifdef LED_CHARGING
     LED_WRITE(LED_CHARGING, status_led_val & (1 << LED_BIT_CHARGING));
+#endif
+#ifdef LED_USER
+    LED_WRITE(LED_USER, status_led_val & (1 << LED_BIT_USER));
 #endif
 }
 
@@ -106,7 +115,7 @@ void status_led_off(void)
  */
 void status_led_all_on(void)
 {
-    status_led_set_internal(0x07);
+    status_led_set_internal(0x0F);
 }
 
 /**
@@ -167,7 +176,7 @@ static void status_led_off_timer_init(void)
  */
 void status_led_display()
 {
-    status_led_set_internal(0x07);
+    status_led_set_internal(0x0F);
     app_timer_start(status_led_blink_timer, APP_TIMER_TICKS(200), NULL);
 }
 

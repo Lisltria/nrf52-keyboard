@@ -10,6 +10,7 @@ enum led_bit_usage
     LED_BIT_BLE,
     LED_BIT_USB,
     LED_BIT_CHARGING,
+	LED_BIT_USER,
 };
 /**
  * @brief 初始化LED设置
