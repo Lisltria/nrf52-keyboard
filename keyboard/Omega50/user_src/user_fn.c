@@ -21,7 +21,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "main.h"
 #include "status_led.h"
 #include "usb_comm.h"
-#include "user_func.h"
 #include "ble_bas_service.h"
 
 #define MODS_SHIFT_MASK (MOD_BIT(KC_LSHIFT) | MOD_BIT(KC_RSHIFT))

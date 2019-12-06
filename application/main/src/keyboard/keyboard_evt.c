@@ -15,22 +15,23 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+#include "../ble/ble_services.h"
 #include "../main.h"
 #include "ble_keyboard.h"
 #include "keyboard_led.h"
-#include  "../ble/ble_services.h"
+#include "keyboard_matrix.h"
 
 static bool usb_connected = false;
 
-__attribute__((weak)) void custom_event_handler(enum user_ble_event arg){}
+__attribute__((weak)) void custom_event_handler(enum user_ble_event arg) {}
 
 __attribute__((weak)) void user_event_handler(enum user_ble_event arg)
 {
     // 处理各项事件，启用对应的处理程序
     switch (arg) {
     case USER_EVT_SLEEP_AUTO:
-        break;
     case USER_EVT_SLEEP_MANUAL:
+        matrix_uninit(); // 释放键盘阵列针脚
         break;
     case USER_USB_CHARGE:
         // 接入USB后，切换至非省电模式防止自动休眠

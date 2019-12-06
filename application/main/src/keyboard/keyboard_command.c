@@ -14,7 +14,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "user_command.h"
+#include "keyboard_command.h"
 #include "action_layer.h"
 #include "action_util.h"
 #include "app_timer.h"
@@ -34,7 +34,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "eeconfig.h"
 #include "status_led.h"
 #include "usb_comm.h"
-#include "user_func.h"
 #include "util.h"
 #include "wait.h"
 #include <stdbool.h>

@@ -278,6 +278,27 @@ void sleep(enum SLEEP_REASON reason)
     }
 }
 
+/**
+ * @brief 使键盘进入关机状态
+ * 
+ * @param reason
+ */
+void systemoff(void)
+{
+    app_timer_stop_all();
+    keyboard_led_deinit();
+    ble_user_event(USER_EVT_SLEEP_AUTO);
+#ifdef RGBLIGHT_ENABLE
+    rgblight_sleep_prepare();
+#endif
+#ifdef HAS_USB
+    usb_comm_sleep_prepare();
+#endif
+    // Go to system-off mode (this function will not return; wakeup will cause a reset).
+    ret_code_t err_code = sd_power_system_off();
+    APP_ERROR_CHECK(err_code);
+}
+
 /**@brief Function for initializing power management.
  */
 static void power_management_init(void)

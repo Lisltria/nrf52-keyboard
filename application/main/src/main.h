@@ -46,4 +46,5 @@ enum user_ble_event {
 
 void ble_user_event(enum user_ble_event arg);
 void sleep(enum SLEEP_REASON reason);
+void systemoff(void);
 extern bool erase_bonds;

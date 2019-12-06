@@ -21,7 +21,30 @@ SRC_FILES += $(APP_SRC_DIR)/keyboard/keyboard_matrix.c \
     $(APP_SRC_DIR)/keyboard/usb_comm.c \
     $(APP_SRC_DIR)/keyboard/power_button.c
 
-INC_FOLDERS += $(APP_SRC_DIR)/keyboard 
+ifeq (yes,$(strip $(STATUS_LED_ENABLE)))
+    SRC_FILES += $(APP_SRC_DIR)/drivers/status_led/status_led.c
+	INC_FOLDERS += $(APP_SRC_DIR)/drivers/status_led
+endif
+
+ifeq (yes,$(strip $(COMMAND_ENABLE)))
+    SRC_FILES += $(APP_SRC_DIR)/keyboard/keyboard_command.c
+endif
+
+INC_FOLDERS += $(APP_SRC_DIR)/keyboard
+
+# Source files common to all targets
+ifeq (yes,$(strip $(RGBLIGHT_ENABLE)))
+INC_FOLDERS += \
+	$(APP_SRC_DIR)/drivers/ws2812
+
+SRC_FILES += \
+	$(APP_SRC_DIR)/drivers/ws2812/ws2812.c \
+	$(APP_SRC_DIR)/drivers/ws2812/rgblight.c \
+	$(APP_SRC_DIR)/drivers/ws2812/led_tables.c \
+	$(SDK_ROOT)/modules/nrfx/drivers/src/nrfx_pwm.c
+endif
+
+
 
 # Version string
 VERSION := $(shell (git describe --always --dirty || echo 'unknown') 2> /dev/null)

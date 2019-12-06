@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "user_func.h"
 #include "app_timer.h"
 #include "config.h"
 #include "nrf_gpio.h"

@@ -16,8 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef CONFIG_H
-#define CONFIG_H
+#pragma once
 
 #include <stdint.h>
 
@@ -93,6 +92,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define RGB_DI_PIN 10
 #define RGBLED_NUM 8
 #define RGBLIGHT_ANIMATIONS
+//#define RGB_PWR_PIN xx // P-mos
+//#define RGB_PWR_PIN_REVERSE 12 // N-mos
 
 // 启用 LED 状态灯
 #define LED_BLE 7
@@ -126,4 +127,3 @@ static const uint8_t column_pin_array[MATRIX_COLS] = {21, 22, 23, 24, 25, 20, 19
 
 #define LED_POSITIVE // LED上拉驱动
 
-#endif

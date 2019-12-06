@@ -26,13 +26,7 @@ INC_FOLDERS += \
 SRC_FILES += \
 	keymap_plain.c \
 	$(USER_SRC_DIR)/user_evt.c \
-	$(USER_SRC_DIR)/status_led.c \
-	$(USER_SRC_DIR)/user_fn.c \
-	$(USER_SRC_DIR)/user_func.c
-
-ifeq (yes,$(strip $(COMMAND_ENABLE)))
-    SRC_FILES += $(USER_SRC_DIR)/user_command.c
-endif
+	$(USER_SRC_DIR)/user_fn.c
 
 all: default ch554
 

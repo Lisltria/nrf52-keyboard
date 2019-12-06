@@ -90,6 +90,19 @@ void matrix_init(void)
 #endif
     }
 }
+/**
+* @brief 释放键盘阵列
+ * 
+ */
+void matrix_uninit(void)
+{
+    for (uint_fast8_t i = MATRIX_ROWS; i--;) {
+        nrf_gpio_cfg_default((uint32_t)row_pin_array[i]);
+    }
+    for (uint_fast8_t i = MATRIX_COLS; i--;) {
+        nrf_gpio_cfg_default((uint32_t)column_pin_array[i]);
+    }
+}
 /** read all rows */
 static matrix_row_t read_cols(void)
 {

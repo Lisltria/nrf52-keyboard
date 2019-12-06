@@ -28,17 +28,6 @@ endif
 $(OUTPUT_DIRECTORY)/nrf52_kbd.out: \
 	LINKER_SCRIPT  := $(APP_PROJ_DIR)/$(LD_NAME)
 
-# Source files common to all targets
-ifeq (yes,$(strip $(RGBLIGHT_ENABLE)))
-INC_FOLDERS += \
-	$(APP_SRC_DIR)/drivers/ws2812
-
-SRC_FILES += \
-	$(APP_SRC_DIR)/drivers/ws2812/ws2812.c \
-	$(APP_SRC_DIR)/drivers/ws2812/rgblight.c \
-	$(APP_SRC_DIR)/drivers/ws2812/led_tables.c \
-	$(SDK_ROOT)/modules/nrfx/drivers/src/nrfx_pwm.c
-endif
 
 SRC_FILES += \
 	$(SDK_ROOT)/components/libraries/util/app_error.c \

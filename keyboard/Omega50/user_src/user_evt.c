@@ -25,8 +25,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "nrf_delay.h"
 #include "status_led.h"
 #include "usb_comm.h"
-#include "user_command.h"
-#include "user_func.h"
+#include "keyboard_command.h"
 
 enum keyboard_status {
     kbd_ble,
@@ -174,7 +173,6 @@ void custom_event_handler(enum user_ble_event arg)
         break;
     case USER_EVT_SLEEP_AUTO:
     case USER_EVT_SLEEP_MANUAL:
-        matrix_uninit(); // 释放键盘阵列针脚
         status_led_all_on();
         nrf_delay_ms(200);
         break;

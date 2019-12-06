@@ -16,8 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef CONFIG_H
-#define CONFIG_H
+#pragma once
 
 #include <stdint.h>
 
@@ -116,6 +115,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define BATTERY_ADC_PIN NRF_SAADC_INPUT_AIN0
 
 // 充电检测配置
+//#define CHARGING_DETECT
 //#define PIN_CHARGING !UCC1
 //#define PIN_STANDBY !UCC2
 
@@ -127,4 +127,3 @@ static const uint8_t column_pin_array[MATRIX_COLS] = {22, 23, 24, 25, 20, 19, 18
 
 #define LED_POSITIVE // LED上拉驱动
 
-#endif
