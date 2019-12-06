@@ -17,14 +17,64 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "status_led.h"
 #include "app_timer.h"
 #include "config.h"
+#include "eeconfig.h"
 #include "keyboard_led.h"
 #include "nrf.h"
 #include "nrf_gpio.h"
 #include <stdint.h>
 
+APP_TIMER_DEF(ble_led_blink_timer);
 static void status_led_off_timer_init();
-
+extern uint8_t switch_id;
+bool blink_status = true; //当前广播灯状态
 uint8_t saved_status_led_val;
+
+void ble_led_blink_timer_handler(void* context)
+{
+    if (blink_status) {
+        switch (switch_id) {
+        case 0:
+        #ifdef BLE_LED_1
+            LED_WRITE(BLE_LED_1, 1);
+            break;
+        #endif
+        case 1:
+        #ifdef BLE_LED_2
+            LED_WRITE(BLE_LED_2, 1);
+            break;
+        #endif
+        case 2:
+        #ifdef BLE_LED_3
+            LED_WRITE(BLE_LED_3, 1);
+            break;
+        #endif
+        default:
+            break;
+        }
+        blink_status = false;
+    } else {
+        switch (switch_id) {
+        case 0:
+        #ifdef BLE_LED_1
+            LED_WRITE(BLE_LED_1, 0);
+            break;
+        #endif
+        case 1:
+        #ifdef BLE_LED_2
+            LED_WRITE(BLE_LED_2, 0);
+            break;
+        #endif
+        case 2:
+        #ifdef BLE_LED_3
+            LED_WRITE(BLE_LED_3, 0);
+            break;
+        #endif
+        default:
+            break;
+        }
+        blink_status = true;
+    }
+}
 
 /**
  * @brief 初始化LED
@@ -46,6 +96,7 @@ void status_led_init()
 #ifdef LED_USER
     nrf_gpio_cfg_output(LED_USER);
 #endif
+    app_timer_create(&ble_led_blink_timer, APP_TIMER_MODE_REPEATED, ble_led_blink_timer_handler);
 }
 
 /**
@@ -66,6 +117,23 @@ void status_led_deinit(void)
 #ifdef LED_USER
     nrf_gpio_cfg_default(LED_USER);
 #endif
+}
+
+/**
+ * @brief 蓝牙广播状态开启闪烁灯
+ * 
+ */
+void ble_blink_led_on()
+{
+    app_timer_start(ble_led_blink_timer, APP_TIMER_TICKS(500), NULL);
+}
+/**
+ * @brief 关闭闪烁灯
+ * 
+ */
+void ble_blink_led_off()
+{
+    app_timer_stop(ble_led_blink_timer);
 }
 
 /**

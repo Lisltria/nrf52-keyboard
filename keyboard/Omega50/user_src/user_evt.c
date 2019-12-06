@@ -37,6 +37,7 @@ enum keyboard_status {
 static enum keyboard_status status = 0;
 static bool charging_full = false;
 static bool ble_connected = false;
+static bool ble_adving = false;
 
 /**
  * @brief 按系统状态更改系统LED、RGB 的颜色
@@ -61,7 +62,9 @@ static void led_status_change()
         status_led_set_val(LED_BIT_USB, 0);
 #endif
 #endif
-        status_led_set();
+        if (!ble_adving) {
+            status_led_set();
+        }
         break;
     case kbd_charge:
 #ifdef LED_CHARGING
@@ -88,7 +91,9 @@ static void led_status_change()
         }
 #endif
 #endif
-        status_led_set();
+        if (!ble_adving) {
+            status_led_set();
+        }
         break;
     case kbd_usb:
 #ifdef LED_USB
@@ -169,6 +174,20 @@ void custom_event_handler(enum user_ble_event arg)
         break;
     case USER_BLE_CONNECTED:
         ble_connected = true;
+        ble_adving = false;
+        ble_blink_led_off();
+        led_status_change();
+        break;
+    case USER_BLE_IDLE:
+        ble_connected = false;
+        ble_adving = false;
+        ble_blink_led_off();
+        led_status_change();
+        break;
+    case USER_BLE_ADV:
+        status_led_off();
+        ble_blink_led_on();
+        ble_adving = true;
         led_status_change();
         break;
     case USER_EVT_SLEEP_AUTO:

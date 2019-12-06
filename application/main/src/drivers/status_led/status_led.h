@@ -12,6 +12,17 @@ enum led_bit_usage
     LED_BIT_CHARGING,
 	LED_BIT_USER,
 };
+
+/**
+ * @brief 蓝牙广播状态开启闪烁灯
+ * 
+ */
+void ble_blink_led_on();
+/**
+ * @brief 关闭闪烁灯
+ * 
+ */
+void ble_blink_led_off();
 /**
  * @brief 初始化LED设置
  * 
