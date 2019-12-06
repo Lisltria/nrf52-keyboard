@@ -115,22 +115,6 @@ static void ble_disconnect()
     }
 }
 
-static void buttonless_dfu_sdh_state_observer(nrf_sdh_state_evt_t state, void* p_context)
-{
-    if (state == NRF_SDH_EVT_STATE_DISABLED) {
-        // Softdevice was disabled before going into reset. Inform bootloader to skip CRC on next boot.
-        nrf_power_gpregret2_set(BOOTLOADER_DFU_SKIP_CRC);
-
-        //Go to system off.
-        nrf_pwr_mgmt_shutdown(NRF_PWR_MGMT_SHUTDOWN_GOTO_SYSOFF);
-    }
-}
-
-/* nrf_sdh state observer. */
-NRF_SDH_STATE_OBSERVER(m_buttonless_dfu_state_obs, 0) = {
-    .handler = buttonless_dfu_sdh_state_observer,
-};
-
 #ifdef MACADDR_SEPRATOR
 /**@brief MAC地址转换为设备名后缀.
  *
@@ -333,13 +317,6 @@ void advertising_slow()
     APP_ERROR_CHECK(ret);
 }
 
-static void disconnect(uint16_t conn_handle, void* p_context)
-{
-    UNUSED_PARAMETER(p_context);
-
-    sd_ble_gap_disconnect(conn_handle, BLE_HCI_REMOTE_USER_TERMINATED_CONNECTION);
-}
-
 static void advertising_config_get(ble_adv_modes_config_t* p_config)
 {
     memset(p_config, 0, sizeof(ble_adv_modes_config_t));
@@ -356,49 +333,6 @@ static void advertising_config_get(ble_adv_modes_config_t* p_config)
     p_config->ble_adv_slow_interval = APP_ADV_SLOW_INTERVAL;
     p_config->ble_adv_slow_timeout = APP_ADV_SLOW_DURATION;
     p_config->ble_adv_on_disconnect_disabled = false;
-}
-
-/**@brief Function for handling dfu events from the Buttonless Secure DFU service
- *
- * @param[in]   event   Event from the Buttonless Secure DFU service.
- */
-static void ble_dfu_evt_handler(ble_dfu_buttonless_evt_type_t event)
-{
-    switch (event) {
-    case BLE_DFU_EVT_BOOTLOADER_ENTER_PREPARE: {
-        // Prevent device from advertising on disconnect.
-        ble_adv_modes_config_t config;
-        advertising_config_get(&config);
-        config.ble_adv_on_disconnect_disabled = true;
-        ble_advertising_modes_config_set(&m_advertising, &config);
-
-        // Disconnect all other bonded devices that currently are connected.
-        // This is required to receive a service changed indication
-        // on bootup after a successful (or aborted) Device Firmware Update.
-        ble_conn_state_for_each_connected(disconnect, NULL);
-        break;
-    }
-
-    case BLE_DFU_EVT_BOOTLOADER_ENTER:
-        // YOUR_JOB: Write app-specific unwritten data to FLASH, control finalization of this
-        //           by delaying reset by reporting false in app_shutdown_handler
-        break;
-
-    case BLE_DFU_EVT_BOOTLOADER_ENTER_FAILED:
-        // YOUR_JOB: Take corrective measures to resolve the issue
-        //           like calling APP_ERROR_CHECK to reset the device.
-        APP_ERROR_CHECK(false);
-        break;
-
-    case BLE_DFU_EVT_RESPONSE_SEND_ERROR:
-        // YOUR_JOB: Take corrective measures to resolve the issue
-        //           like calling APP_ERROR_CHECK to reset the device.
-        APP_ERROR_CHECK(false);
-        break;
-
-    default:
-        break;
-    }
 }
 
 /**@brief Function for handling Peer Manager events.
@@ -528,17 +462,6 @@ static void dis_init(void)
     dis_init_obj.dis_char_rd_sec = SEC_JUST_WORKS;
 
     err_code = ble_dis_init(&dis_init_obj);
-    APP_ERROR_CHECK(err_code);
-}
-
-static void dfu_init(void)
-{
-    uint32_t err_code;
-    ble_dfu_buttonless_init_t dfus_init = { 0 };
-
-    dfus_init.evt_handler = ble_dfu_evt_handler;
-
-    err_code = ble_dfu_buttonless_init(&dfus_init);
     APP_ERROR_CHECK(err_code);
 }
 
@@ -873,6 +796,5 @@ void ble_services_init(evt_handler handler)
     // services
     qwr_init();
     dis_init();
-    dfu_init();
     conn_params_init();
 }
