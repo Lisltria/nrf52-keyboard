@@ -35,7 +35,9 @@ enum keyboard_status {
 };
 
 static enum keyboard_status status = 0;
+#ifdef CHARGING_DETECT
 static bool charging_full = false;
+#endif
 static bool ble_connected = false;
 static bool ble_adving = false;
 
