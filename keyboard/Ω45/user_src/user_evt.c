@@ -21,12 +21,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "ble_keyboard.h"
 #include "config.h"
+#include "keyboard_command.h"
 #include "keyboard_led.h"
 #include "main.h"
 #include "nrf_delay.h"
 #include "status_led.h"
 #include "usb_comm.h"
-#include "keyboard_command.h"
 
 enum keyboard_status {
     kbd_ble,
@@ -64,9 +64,7 @@ static void led_status_change()
         status_led_set_val(LED_BIT_USB, 0);
 #endif
 #endif
-        if (!ble_adving) {
-            status_led_set();
-        }
+        status_led_set();
         break;
     case kbd_charge:
 #ifdef LED_CHARGING
@@ -75,7 +73,6 @@ static void led_status_change()
         } else {
             status_led_set_val(LED_BIT_CHARGING, 1);
         }
-
 #endif
 #ifdef LED_BLE
         if (ble_connected) {
@@ -107,7 +104,6 @@ static void led_status_change()
         } else {
             status_led_set_val(LED_BIT_CHARGING, 1);
         }
-
 #endif
 #ifdef LED_BLE
         if (usb_working()) {
@@ -188,10 +184,16 @@ void custom_event_handler(enum user_ble_event arg)
         ble_blink_led_off();
         led_status_change();
         break;
-    case USER_BLE_ADV:
+    case USER_BLE_FAST_ADV:
         status_led_off();
         ble_blink_led_on();
         ble_adving = true;
+        led_status_change();
+        break;
+    case USER_BLE_SLOW_ADV: //慢速广播就关闭状态灯闪烁
+        ble_connected = false;
+        ble_adving = true;
+        ble_blink_led_off();
         led_status_change();
         break;
     case USER_EVT_SLEEP_AUTO:

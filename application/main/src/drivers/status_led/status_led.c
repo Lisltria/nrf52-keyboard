@@ -21,6 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "keyboard_led.h"
 #include "nrf.h"
 #include "nrf_gpio.h"
+#include "usb_comm.h"
 #include <stdint.h>
 
 APP_TIMER_DEF(ble_led_blink_timer);
@@ -31,48 +32,51 @@ uint8_t saved_status_led_val;
 
 void ble_led_blink_timer_handler(void* context)
 {
-    if (blink_status) {
-        switch (switch_id) {
-        case 0:
-        #ifdef BLE_LED_1
-            LED_WRITE(BLE_LED_1, 1);
-            break;
-        #endif
-        case 1:
-        #ifdef BLE_LED_2
-            LED_WRITE(BLE_LED_2, 1);
-            break;
-        #endif
-        case 2:
-        #ifdef BLE_LED_3
-            LED_WRITE(BLE_LED_3, 1);
-            break;
-        #endif
-        default:
-            break;
+    if (!usb_working()) {
+        if (blink_status) {
+            switch (switch_id) {
+            case 0:
+#ifdef BLE_LED_1
+                LED_WRITE(BLE_LED_1, 1);
+                break;
+#endif
+            case 1:
+#ifdef BLE_LED_2
+                LED_WRITE(BLE_LED_2, 1);
+                break;
+#endif
+            case 2:
+#ifdef BLE_LED_3
+                LED_WRITE(BLE_LED_3, 1);
+                break;
+#endif
+            default:
+                break;
+            }
+
+            blink_status = false;
+        } else {
+            switch (switch_id) {
+            case 0:
+#ifdef BLE_LED_1
+                LED_WRITE(BLE_LED_1, 0);
+                break;
+#endif
+            case 1:
+#ifdef BLE_LED_2
+                LED_WRITE(BLE_LED_2, 0);
+                break;
+#endif
+            case 2:
+#ifdef BLE_LED_3
+                LED_WRITE(BLE_LED_3, 0);
+                break;
+#endif
+            default:
+                break;
+            }
+            blink_status = true;
         }
-        blink_status = false;
-    } else {
-        switch (switch_id) {
-        case 0:
-        #ifdef BLE_LED_1
-            LED_WRITE(BLE_LED_1, 0);
-            break;
-        #endif
-        case 1:
-        #ifdef BLE_LED_2
-            LED_WRITE(BLE_LED_2, 0);
-            break;
-        #endif
-        case 2:
-        #ifdef BLE_LED_3
-            LED_WRITE(BLE_LED_3, 0);
-            break;
-        #endif
-        default:
-            break;
-        }
-        blink_status = true;
     }
 }
 
