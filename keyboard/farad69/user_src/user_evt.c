@@ -134,7 +134,7 @@ void custom_event_handler(enum user_ble_event arg)
         nrf_delay_ms(200);
         break;
     case USER_LED_ON:
-        status_led_on();
+        //status_led_on();
         break;
     case USER_LED_OFF:
         status_led_off();
