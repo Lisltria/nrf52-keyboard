@@ -2,7 +2,7 @@
 ROOT_DIR := /usr/local/src/nrf52-keyboard
 # 一般情况下应该将ROOT_DIR设定为如下
 #ROOT_DIR := ../..
-USER_SRC_DIR := ./user_src
+USER_SRC_DIR := $(ROOT_DIR)/application/main/src/user/gtv1
 APP_MAIN_DIR := $(ROOT_DIR)/application/main
 TMK_CORE_DIR := $(ROOT_DIR)/tmk/tmk_core
 USB_SOURCE_DIR := $(ROOT_DIR)/usb
