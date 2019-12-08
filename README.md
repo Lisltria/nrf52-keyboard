@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a TMK keyboard firmware for nRF52810, nRF51822 version see [here](https://github.com/Lotlab/nrf51822-keyboard).
+This is a TMK keyboard firmware for nRF52810 or nRF52832, nRF51822 version see [here](https://github.com/Lotlab/nrf51822-keyboard).
 
 ## 概述
 
@@ -15,7 +15,9 @@ This is a TMK keyboard firmware for nRF52810, nRF51822 version see [here](https:
   - main/ 主程序
     - src/ 源码
       - ble/ 蓝牙相关代码
-      - tmk/ tmk桥接相关
+      - drivers/ 添加的各种驱动相关
+      - user/ 自定义的各种用户代码
+	  - keyboard/ 键盘功能相关
       - config/ 硬件配置相关
     - project/ 工程
   - bootloader/ 
@@ -25,10 +27,12 @@ This is a TMK keyboard firmware for nRF52810, nRF51822 version see [here](https:
 - SDK/ nRF52 SDK
 - tmk/ tmk core 相关
 - usb/ USB部分代码
+- doc/ 相关说明文档
 
 ## 功能亮点
 
-- 蓝牙/USB双模切换
+- 蓝牙/USB双模
+- 多个蓝牙设备之间切换
 - USB全键无冲
 - 配列下载更新
 - 电量上传
@@ -120,7 +124,7 @@ This is a TMK keyboard firmware for nRF52810, nRF51822 version see [here](https:
 现在蓝牙和USB控制器程序的Makefile都放在一起了。进入对应的硬件目录，直接make即可。
 
 ```
-cd keyboard/lot60-ble
+cd keyboard/gt-ble60
 make
 ```
 
