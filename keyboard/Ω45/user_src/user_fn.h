@@ -11,7 +11,7 @@ enum fn_functions {
     AF_DELETE_BOND,	
     AF_LED_DISPLAY,
     AF_TRICKY_SLSH,
-    BT_BAT,
+    AF_BT_BAT,
 };
 
 #endif
