@@ -101,7 +101,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define UART_RXD 17
 #define UART_TXD 18
 #define UART_DET 19
-#define UART_BAUDRATE NRF_UART_BAUDRATE_57600
+#define UART_BAUDRATE NRF_UART_BAUDRATE_115200
+#define UART0_BUAD 115200
+#define CH55X_FREQ_SYS 24000000
 
 // 电量检测配置
 #define BATTERY_ADC_PIN NRF_SAADC_INPUT_AIN0

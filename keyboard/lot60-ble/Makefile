@@ -11,7 +11,10 @@ APP_SRC_DIR := $(APP_MAIN_DIR)/src
 NRF_CHIP := nrf52810
 
 CONFIG_H = config.h
-INC_FOLDERS += .
+INC_FOLDERS += \
+    . \
+	$(APP_SRC_DIR)/ble
+
 SRC_FILES += keymap_plain.c user_evt.c led_rgb.c
 
 # 配置项：功能选项
