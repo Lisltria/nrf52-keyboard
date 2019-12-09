@@ -91,8 +91,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define RGB_DI_PIN 10
 #define RGBLED_NUM 8
 #define RGBLIGHT_ANIMATIONS
-//#define RGB_PWR_PIN xx // P-mos
-#define RGB_PWR_PIN_REVERSE 12 // N-mos
+#define RGB_PWR_PIN 12 // P-mos
+//#define RGB_PWR_PIN_REVERSE 12 // N-mos
 
 // 启用 LED 状态灯
 #define LED_USER 5
