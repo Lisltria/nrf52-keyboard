@@ -102,9 +102,13 @@ static void send_event(enum user_ble_event arg)
         break;
     case USER_USB_CONNECTED:
     case USER_USB_PROTOCOL_BOOT:
-    case USER_USB_PROTOCOL_REPORT:
         // 设置为实际的protocol
         keyboard_protocol = usb_protocol;
+        break;
+    case USER_USB_PROTOCOL_REPORT:
+        if (usb_working()) {
+            keyboard_protocol = usb_protocol;
+        }
         break;
     default:
         break;
@@ -238,6 +242,10 @@ static void uart_evt_handler(app_uart_evt_t* p_app_uart_event)
 
     case APP_UART_FIFO_ERROR:
         app_uart_flush();
+        break;
+    case APP_UART_COMMUNICATION_ERROR:
+        is_checked = false;
+        usb_comm_sleep_prepare();
         break;
     default:
         break;
