@@ -1,35 +1,38 @@
+
 {
-    // 使用 IntelliSense 了解相关属性。 
-    // 悬停以查看现有属性的描述。
-    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
+    // Visual Studio Code launch.json for XMC 2Go development board 
+    "version": "0.4.0",
     "configurations": [
-        {
-            "cwd": "${workspaceRoot}/keyboard/lot60-ble/_build/",
-            "executable": "nrf52_kbd.out",
-            "name": "Debug Microcontroller",
-            "request": "launch",
-            "type": "cortex-debug",
-            "servertype": "pyocd",
-            "armToolchainPath": "/usr/local/gcc-arm-none-eabi-7-2018-q2-update/bin",
-            "device": "nrf52_kbd",
-            "targetId": "nrf52",
-            "boardId": ""
+    
+      {
+        "type": "gnu-debugger",
+        "request": "launch",
+        "name": "GNU debugger",
+        "program": "${workspaceRoot}/keyboard/Omega50/_build/nrf52_kbd.out",
+        "toolchain": "D:/APP/GCC/2018q2/bin/",
+        "client": "arm-none-eabi-gdb",
+        "server": "JLinkGDBServer",
+        "host": "USB",
+        "windows": {
+          "server": "C:/Program Files (x86)/SEGGER/JLink/JLinkGDBServerCL.exe",
         },
-        {
-            "name": "Debug Application",
-            "type": "gdb",
-            "request": "attach",
-            "target": ":3333",
-            "remote": true,
-            "cwd": "${workspaceRoot}/keyboard/lot60-ble/_build/",
-            "executable": "nrf52_kbd.out",
-            "valuesFormatting": "parseText",
-            "autorun": [
-                "file nrf52_kbd.out",
-                "mon reset"
-            ],
-            "gdbpath": "/usr/local/gcc-arm-none-eabi-7-2018-q2-update/bin/arm-none-eabi-gdb",
-        }
+        "serverArgs": [
+          "-device", "nRF52832_xxAA",
+          "-if", "SWD",
+          "-speed", "auto",
+          "-select", "USB",
+          "-noir",
+          "-LocalhostOnly",
+          "-endian", "little",
+        ],
+        "serverPort": 2331,
+        "customVariables": [
+          "port0",
+          "port1",
+          "port2",
+        ],
+        "autoRun": false,
+        "debugOutput": true,
+      }
     ]
 }
