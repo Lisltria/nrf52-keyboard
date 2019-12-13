@@ -27,7 +27,7 @@
 #include <ble_keyboard.h>
 
 #ifndef RGBLIGHT_LIMIT_VAL
-#define RGBLIGHT_LIMIT_VAL 240
+#define RGBLIGHT_LIMIT_VAL 255
 #endif
 
 #ifndef MIN
@@ -601,7 +601,6 @@ static void rgblight_animations_handler(void* p_context)
 void rgblight_timer_init(void)
 {
     app_timer_create(&rgblight_timer, APP_TIMER_MODE_REPEATED, rgblight_animations_handler);
-    rgblight_timer_enabled = true;
 }
 void rgblight_timer_enable(void)
 {
