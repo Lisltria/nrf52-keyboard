@@ -346,25 +346,41 @@ void rgblight_enable_noeeprom(void)
     rgblight_mode_noeeprom(rgblight_config.mode);
 }
 
+void rgblight_set_val(uint8_t value)
+{
+    LED_TYPE tmp_led;
+    sethsv(rgblight_config.hue, rgblight_config.sat, value, &tmp_led);
+    rgblight_setrgb(tmp_led.r, tmp_led.g, tmp_led.b);
+}
+
 void rgblight_disable(void)
 {
-    rgblight_config.enable = 0;
-    eeconfig_update_rgblight(rgblight_config.raw);
-    wait_ms(1);
 #ifdef RGBLIGHT_ANIMATIONS
     rgblight_timer_disable();
 #endif
+    rgblight_set_val(120);
+    wait_ms(1);
+    rgblight_set_val(60);
+    wait_ms(1);
+    rgblight_config.enable = 0;
+    eeconfig_update_rgblight(rgblight_config.raw);
     rgblight_set();
+    wait_ms(5);
     rgb_pwr_off();
 }
 
 void rgblight_disable_noeeprom(void)
 {
-    rgblight_config.enable = 0;
 #ifdef RGBLIGHT_ANIMATIONS
     rgblight_timer_disable();
 #endif
+    rgblight_set_val(120);
+    wait_ms(1);
+    rgblight_set_val(60);
+    wait_ms(1);
+    rgblight_config.enable = 0;
     rgblight_set();
+    wait_ms(5);
     rgb_pwr_off();
 }
 
