@@ -141,7 +141,7 @@ static inline void delay_us(void)
 #ifdef __GNUC__
 #define __nop() __asm("NOP")
 #endif
-    for (int i = 0; i < 40; i++) {
+    for (int i = 0; i < 48; i++) {
         __nop(); //64mhz, 64cycle = 1us, delay 0.625us
     }
 }
