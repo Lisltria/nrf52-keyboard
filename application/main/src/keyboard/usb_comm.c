@@ -102,9 +102,6 @@ static void send_event(enum user_ble_event arg)
         break;
     case USER_USB_CONNECTED:
     case USER_USB_PROTOCOL_BOOT:
-        // 设置为实际的protocol
-        keyboard_protocol = usb_protocol;
-        break;
     case USER_USB_PROTOCOL_REPORT:
         if (usb_working()) {
             keyboard_protocol = usb_protocol;
