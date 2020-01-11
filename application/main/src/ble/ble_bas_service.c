@@ -34,6 +34,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 static nrf_saadc_value_t m_buffer_pool[2][SAMPLES_IN_BUFFER];
 uint8_t bat_level;
 
+struct BatteryInfo battery_info;
+
 APP_TIMER_DEF(m_battery_timer_id); /**< Battery timer. */
 BLE_BAS_DEF(m_bas); /**< Structure used to identify the battery service. */
 
@@ -104,26 +106,25 @@ void battery_timer_start(void)
     APP_ERROR_CHECK(err_code);
 }
 
+static void calculate_battery_persentage(struct BatteryInfo * info) {
+    if (info->voltage >= 4100)
+        info->percentage = 100;
+    else if (info->voltage >= 3335)
+        info->percentage = 15 + (info->voltage - 3335) / 9;
+    else if (info->voltage >= 2900)
+        info->percentage = (info->voltage - 2900) / 29;
+    else
+        info->percentage = 0;
+}
+
 static void adc_result_handler(nrf_saadc_value_t value)
 {
     // RESULT = [V(P) – V(N) ] * GAIN/REFERENCE * 2 ^ (RESOLUTION - m)
     // value  = V_in / 1.2 * 1024
     // V_in   = V_bat * 2.2 / 12.2
-
-    uint32_t vott = value * 1200 * 122 / 1024 / 22;
-
-    if (vott >= 4200)
-        bat_level = 100;
-    else if (vott >= 4000)
-        bat_level = 90 + (vott - 4000) / 20;
-    else if (vott >= 3600)
-        bat_level = 10 + (vott - 3600) / 5;
-    else if (vott >= 3200)
-        bat_level = (vott - 3200) / 40;
-    else
-        bat_level = 0;
-
-    battery_level_update(bat_level);
+    battery_info.voltage = (uint32_t)value * 1200 * 122 / 1024 / 22;
+    calculate_battery_persentage(&battery_info);
+    battery_level_update(battery_info.percentage);
 }
 
 static const nrfx_saadc_config_t config = NRFX_SAADC_DEFAULT_CONFIG;
