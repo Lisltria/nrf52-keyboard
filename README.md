@@ -10,6 +10,8 @@ This is a TMK keyboard firmware for nRF52810 or nRF52832, nRF51822 version see [
 
 此固件中的USB部分和KeymapDownloader部分重用了 [nrf51822-keyboard](https://github.com/Lotlab/nrf51822-keyboard) 的代码。
 
+PCB设计文件及原理图公开在 [Lotkb_Keyboard_PCB](https://github.com/genokolar/Lotkb_Keyboard_PCB) 
+
 ## 目录结构
 - application/ 固件相关
   - main/ 主程序
