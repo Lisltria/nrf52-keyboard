@@ -12,6 +12,10 @@ extern uint16_t m_conn_handle;
  */
 void ble_services_init();
 
+/**@brief 写入switch id.
+ *
+ */
+void switch_device_id_write(uint8_t val);
 /**@brief 切换连接设备.
  *
  * @param[in] id  要切换的设备的ID号
@@ -36,9 +40,9 @@ void advertising_start(bool erase_bonds);
 /**@brief 重新开启蓝牙广播.
  * 
  * @param[in] mode  广播模式
- * @param[in] whitelist  是否启用白名单
+ * @param[in] reset  是否重新绑定
  */
-void advertising_restart(ble_adv_mode_t mode, bool whitelist);
+void advertising_restart(ble_adv_mode_t mode, bool reset);
 
 /**@brief Init Bluetooth stack
  */
