@@ -10,7 +10,7 @@ IF %ERRORLEVEL% NEQ 0 (
 
 IF NOT EXIST micro-ecc/uECC.c (
     ECHO "micro-ecc not found! Let's pull it from HEAD."
-    git clone https://github.com/kmackay/micro-ecc.git
+    git clone --depth 1 https://github.com/kmackay/micro-ecc.git
 )
 
 make -C nrf51_armgcc/armgcc
