@@ -54,8 +54,11 @@ static matrix_row_t read_cols(uint8_t row);
 #else
 static matrix_row_t read_cols(void);
 #endif
+
+#ifndef NOT_MATRIX
 static void select_row(uint8_t row);
 static void unselect_rows(uint8_t row);
+#endif
 
 #ifdef ROW_IN
 #define READ_COL(pin) (!nrf_gpio_pin_read(pin))
@@ -97,7 +100,7 @@ static matrix_row_t read_cols(uint8_t row)
 #else
 static matrix_row_t read_cols(void)
 {
-    uint16_t result = 0;
+    uint32_t result = 0;
 
     for (uint_fast8_t c = 0; c < MATRIX_COLS; c++) {
         if (READ_COL((uint32_t)column_pin_array[c]))
@@ -108,6 +111,7 @@ static matrix_row_t read_cols(void)
 }
 #endif
 
+#ifndef NOT_MATRIX
 static void select_row(uint8_t row)
 {
 nrf_gpio_cfg(
@@ -148,6 +152,7 @@ static void unselect_rows(uint8_t row)
 #endif
 #endif
 }
+#endif
 
 static inline void delay_us(void)
 {
@@ -166,8 +171,12 @@ static inline void delay_us(void)
 uint8_t matrix_scan(void)
 {
     for (uint8_t i = 0; i < MATRIX_ROWS; i++) {
+#ifdef NOT_MATRIX
+        if (i > 0) continue;
+#else
         select_row(i);
         delay_us(); // wait stable
+#endif
 #ifdef LESS_IO
         matrix_row_t cols = read_cols(i);
 #else
@@ -182,7 +191,9 @@ uint8_t matrix_scan(void)
             }
             debouncing = DEBOUNCE_RELOAD;
         }
+#ifndef NOT_MATRIX
         unselect_rows(i);
+#endif
     }
 
     if (debouncing) {
@@ -299,6 +310,11 @@ void matrix_wakeup_prepare(void)
 {
 // 这里监听所有按键作为唤醒按键，所以真正的唤醒判断应该在main的初始化过程中
 #ifdef ROW_IN
+#ifdef NOT_MATRIX
+    for (uint8_t i = 0; i < MATRIX_COLS; i++) {
+        nrf_gpio_cfg_sense_input(column_pin_array[i], NRF_GPIO_PIN_PULLUP, NRF_GPIO_PIN_SENSE_LOW);
+    }
+#else
     for (uint8_t i = 0; i < MATRIX_COLS; i++) {
         nrf_gpio_cfg_output(column_pin_array[i]);
         nrf_gpio_pin_set(column_pin_array[i]);
@@ -306,6 +322,7 @@ void matrix_wakeup_prepare(void)
     for (uint8_t i = 0; i < MATRIX_ROWS; i++) {
         nrf_gpio_cfg_sense_input(row_pin_array[i], NRF_GPIO_PIN_PULLDOWN, NRF_GPIO_PIN_SENSE_HIGH);
     }
+#endif
 #else
     for (uint8_t i = 0; i < MATRIX_COLS; i++) {
         nrf_gpio_cfg_sense_input(column_pin_array[i], NRF_GPIO_PIN_PULLDOWN, NRF_GPIO_PIN_SENSE_HIGH);

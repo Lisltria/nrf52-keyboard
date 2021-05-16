@@ -37,7 +37,7 @@ USB_SOURCE_DIR := $(ROOT_DIR)/usb
 APP_PROJ_DIR := $(APP_MAIN_DIR)/project
 APP_SRC_DIR := $(APP_MAIN_DIR)/src
 
-all: default ch554
+all: default
 
 include $(APP_PROJ_DIR)/kbd.mk
-include $(USB_SOURCE_DIR)/usb.mk
+# include $(USB_SOURCE_DIR)/usb.mk
