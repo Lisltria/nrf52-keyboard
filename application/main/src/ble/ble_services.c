@@ -27,6 +27,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "ble_dis.h"
 #include "ble_srv_common.h"
 #include "nrf_ble_gatt.h"
+#include "nrf_ble_scan.h"
 #include "nrf_ble_qwr.h"
 #include "nrf_bootloader_info.h"
 #include "nrf_power.h"
@@ -72,6 +73,7 @@ static pm_peer_id_t m_peer_id; /**< Device reference handle to the current bonde
 uint8_t switch_id = 0; /** 当前设备ID Device ID of currently in the eeconfig   */
 #endif
 
+NRF_BLE_SCAN_DEF(m_scan);   /**< Scanning Module instance. */
 NRF_BLE_GATT_DEF(m_gatt); /**< GATT module instance. */
 NRF_BLE_QWR_DEF(m_qwr); /**< Context for the Queued Write module.*/
 BLE_ADVERTISING_DEF(m_advertising); /**< Advertising module instance. */
@@ -323,6 +325,20 @@ void switch_device_init()
 }
 #endif
 
+#define ENABLE_SCAN
+#ifdef ENABLE_SCAN
+/**@brief Function for initializing the scanning.
+ */
+static void scan_start(void)
+{
+    ret_code_t err_code;
+
+    err_code = nrf_ble_scan_start(&m_scan);
+    APP_ERROR_CHECK(err_code);
+
+}
+#endif
+
 /**
  * @brief 开启蓝牙广播.
  * 
@@ -334,6 +350,9 @@ void advertising_start(bool erase_bonds)
         delete_bonds();
         // Advertising is started by PM_EVT_PEERS_DELETE_SUCCEEDED event.
     } else {
+#ifdef ENABLE_SCAN
+        scan_start();
+#endif
         whitelist_set(PM_PEER_ID_LIST_SKIP_NO_ID_ADDR);
         ret_code_t ret = ble_advertising_start(&m_advertising, BLE_ADV_MODE_FAST);
         APP_ERROR_CHECK(ret);
@@ -936,9 +955,71 @@ void ble_passkey_send(uint8_t const* p_key)
     trig_event_param(USER_EVT_BLE_PASSKEY_STATE, PASSKEY_STATE_SEND);
 }
 
+/**@brief Function for handling Scanning Module events.
+ */
+#ifdef ENABLE_SCAN
+static void scan_evt_handler(scan_evt_t const * p_scan_evt)
+{
+    ret_code_t err_code;
+
+    switch(p_scan_evt->scan_evt_id)
+    {
+        case NRF_BLE_SCAN_EVT_CONNECTING_ERROR:
+        {
+            err_code = p_scan_evt->params.connecting_err.err_code;
+            APP_ERROR_CHECK(err_code);
+        } break;
+
+        default:
+            break;
+    }
+}
+
+static const char m_target_periph_name[] = "Mitosis-Pip_64EAFB";
+static void scan_init(void)
+{
+    ret_code_t          err_code;
+    ble_uuid_t          target_uuid = 
+    {
+        .uuid = BLE_UUID_HEART_RATE_SERVICE,
+        .type = BLE_UUID_TYPE_BLE
+    };
+    nrf_ble_scan_init_t init_scan;
+
+    memset(&init_scan, 0, sizeof(init_scan));
+
+    init_scan.connect_if_match = true;
+    init_scan.conn_cfg_tag     = APP_BLE_CONN_CFG_TAG;
+
+    err_code = nrf_ble_scan_init(&m_scan, &init_scan, scan_evt_handler);
+    APP_ERROR_CHECK(err_code);
+
+    if (strlen(m_target_periph_name) != 0)
+    {
+        err_code = nrf_ble_scan_filter_set(&m_scan, 
+                                           SCAN_NAME_FILTER, 
+                                           m_target_periph_name);
+        APP_ERROR_CHECK(err_code);
+    }
+
+    err_code = nrf_ble_scan_filter_set(&m_scan, 
+                                       SCAN_UUID_FILTER, 
+                                       &target_uuid);
+    APP_ERROR_CHECK(err_code);
+
+    err_code = nrf_ble_scan_filters_enable(&m_scan, 
+                                           NRF_BLE_SCAN_NAME_FILTER | NRF_BLE_SCAN_UUID_FILTER, 
+                                           false);
+    APP_ERROR_CHECK(err_code);
+}
+#endif
+
 void ble_services_init()
 {
     peer_manager_init();
+#ifdef ENABLE_SCAN
+    scan_init();
+#endif
     gap_params_init();
     gatt_init();
     advertising_init();
