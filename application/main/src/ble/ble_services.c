@@ -325,7 +325,6 @@ void switch_device_init()
 }
 #endif
 
-#define ENABLE_SCAN
 #ifdef ENABLE_SCAN
 /**@brief Function for initializing the scanning.
  */
@@ -979,11 +978,6 @@ static const char m_target_periph_name[] = "Mitosis-Pip_64EAFB";
 static void scan_init(void)
 {
     ret_code_t          err_code;
-    ble_uuid_t          target_uuid = 
-    {
-        .uuid = BLE_UUID_HEART_RATE_SERVICE,
-        .type = BLE_UUID_TYPE_BLE
-    };
     nrf_ble_scan_init_t init_scan;
 
     memset(&init_scan, 0, sizeof(init_scan));
@@ -1002,13 +996,8 @@ static void scan_init(void)
         APP_ERROR_CHECK(err_code);
     }
 
-    err_code = nrf_ble_scan_filter_set(&m_scan, 
-                                       SCAN_UUID_FILTER, 
-                                       &target_uuid);
-    APP_ERROR_CHECK(err_code);
-
     err_code = nrf_ble_scan_filters_enable(&m_scan, 
-                                           NRF_BLE_SCAN_NAME_FILTER | NRF_BLE_SCAN_UUID_FILTER, 
+                                           NRF_BLE_SCAN_NAME_FILTER,
                                            false);
     APP_ERROR_CHECK(err_code);
 }

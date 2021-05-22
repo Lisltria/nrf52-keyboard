@@ -136,3 +136,4 @@ static const uint8_t column_pin_array[MATRIX_COLS] = { 2,  3,  4,  5,  6,
 #endif
 #define ROW_IN // 键盘阵列的二极管方向是从COL->ROW
 #define NOT_MATRIX
+#define ENABLE_SCAN
