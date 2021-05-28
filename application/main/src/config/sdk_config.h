@@ -10472,18 +10472,6 @@
 
 // </e>
 
-
-
-
-
-
-
-
-
-
-
-
-
 // </e>
 
 // <e> NRF_SDH_ENABLED - nrf_sdh - SoftDevice handler
