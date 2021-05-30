@@ -267,14 +267,14 @@ ret_code_t ble_bas_battery_level_update(ble_bas_t * p_bas,
                                           &gatts_value);
         if (err_code == NRF_SUCCESS)
         {
-            NRF_LOG_INFO("Battery level has been updated: %d%%", battery_level)
+            NRF_LOG_INFO("Battery level has been updated: %d%%", battery_level);
 
             // Save new battery value.
             p_bas->battery_level_last = battery_level;
         }
         else
         {
-            NRF_LOG_DEBUG("Error during battery level update: 0x%08X", err_code)
+            NRF_LOG_DEBUG("Error during battery level update: 0x%08X", err_code);
 
             return err_code;
         }

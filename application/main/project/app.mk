@@ -91,6 +91,8 @@ SRC_FILES += \
 	$(SDK_ROOT)/components/ble/nrf_ble_gatt/nrf_ble_gatt.c \
 	$(SDK_ROOT)/components/ble/nrf_ble_qwr/nrf_ble_qwr.c \
 	$(SDK_ROOT)/components/ble/nrf_ble_scan/nrf_ble_scan.c \
+	$(SDK_ROOT)/components/ble/ble_services/ble_nus_c/ble_nus_c.c \
+	$(SDK_ROOT)/components/ble/ble_db_discovery/ble_db_discovery.c \
 	$(SDK_ROOT)/components/ble/peer_manager/peer_data_storage.c \
 	$(SDK_ROOT)/components/ble/peer_manager/peer_database.c \
 	$(SDK_ROOT)/components/ble/peer_manager/peer_id.c \
@@ -176,6 +178,8 @@ INC_FOLDERS += \
 	$(SDK_ROOT)/components/ble/nrf_ble_gatt \
 	$(SDK_ROOT)/components/ble/nrf_ble_qwr \
 	$(SDK_ROOT)/components/ble/nrf_ble_scan \
+	$(SDK_ROOT)/components/ble/ble_db_discovery \
+	$(SDK_ROOT)/components/ble/ble_services/ble_nus_c \
 	$(SDK_ROOT)/modules/nrfx \
 	$(SDK_ROOT)/integration/nrfx/legacy \
 	$(SDK_ROOT)/external/segger_rtt \

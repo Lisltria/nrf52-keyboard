@@ -51,6 +51,7 @@
 
 #include "sdk_common.h"
 #include "nrf_section.h"
+#include "SEGGER_RTT.h"
 #if NRF_MODULE_ENABLED(NRF_LOG)
 #include "nrf_strerror.h"
 #define NRF_LOG_ERROR_STRING_GET(code) nrf_strerror_get(code)
@@ -108,10 +109,10 @@ extern "C" {
  *  @details This macro is compiled only if @ref NRF_LOG_LEVEL includes debug logs.
  */
 
-#define NRF_LOG_ERROR(...)                     NRF_LOG_INTERNAL_ERROR(__VA_ARGS__)
-#define NRF_LOG_WARNING(...)                   NRF_LOG_INTERNAL_WARNING( __VA_ARGS__)
-#define NRF_LOG_INFO(...)                      NRF_LOG_INTERNAL_INFO( __VA_ARGS__)
-#define NRF_LOG_DEBUG(...)                     NRF_LOG_INTERNAL_DEBUG( __VA_ARGS__)
+#define NRF_LOG_ERROR(...)                     SEGGER_RTT_printf(0, __VA_ARGS__)//NRF_LOG_INTERNAL_ERROR(__VA_ARGS__)
+#define NRF_LOG_WARNING(...)                   SEGGER_RTT_printf(0, __VA_ARGS__)//NRF_LOG_INTERNAL_WARNING( __VA_ARGS__)
+#define NRF_LOG_INFO(...)                      SEGGER_RTT_printf(0, __VA_ARGS__)// NRF_LOG_INTERNAL_INFO( __VA_ARGS__)
+#define NRF_LOG_DEBUG(...)                     SEGGER_RTT_printf(0, __VA_ARGS__)// NRF_LOG_INTERNAL_DEBUG( __VA_ARGS__)
 
 /** @def NRF_LOG_INST_ERROR
  *  @brief Macro for logging error messages for a given module instance. It takes a printf-like, formatted

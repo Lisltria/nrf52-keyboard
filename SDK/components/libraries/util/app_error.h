@@ -57,6 +57,7 @@
 #include "sdk_errors.h"
 #include "nordic_common.h"
 #include "app_error_weak.h"
+#include "SEGGER_RTT.h"
 #ifdef ANT_STACK_SUPPORT_REQD
 #include "ant_error.h"
 #endif // ANT_STACK_SUPPORT_REQD
@@ -164,6 +165,10 @@ void app_error_log_handle(uint32_t id, uint32_t pc, uint32_t info);
         const uint32_t LOCAL_ERR_CODE = (ERR_CODE);         \
         if (LOCAL_ERR_CODE != NRF_SUCCESS)                  \
         {                                                   \
+            SEGGER_RTT_printf(0, "ERR_CODE = %d, %s at %d\n", \
+                              LOCAL_ERR_CODE,               \
+                              (uint8_t*)__FILE__,           \
+                              __LINE__);                    \
             APP_ERROR_HANDLER(LOCAL_ERR_CODE);              \
         }                                                   \
     } while (0)

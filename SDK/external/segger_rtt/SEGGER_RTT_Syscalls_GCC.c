@@ -71,7 +71,9 @@ Revision: $Rev: 4351 $
 #include <reent.h>  // required for _write_r
 #include "SEGGER_RTT.h"
 
-
+#ifndef _PARAMS
+#define _PARAMS(paramlist)		paramlist
+#endif 
 /*********************************************************************
 *
 *       Types

@@ -44,6 +44,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "data_storage.h"
 #include "util.h"
 #include <string.h>
+#include "SEGGER_RTT.h"
 
 #define PNP_ID_VENDOR_ID_SOURCE 0x02 /**< Vendor ID Source. */
 
@@ -1005,18 +1006,28 @@ static void scan_init(void)
 
 void ble_services_init()
 {
+    SEGGER_RTT_printf(0, "ble ser init tag1\n");
     peer_manager_init();
+    SEGGER_RTT_printf(0, "ble ser init tag2\n");
 #ifdef ENABLE_SCAN
     scan_init();
+    SEGGER_RTT_printf(0, "ble ser init tag3\n");
 #endif
     gap_params_init();
+    SEGGER_RTT_printf(0, "ble ser init tag4\n");
     gatt_init();
+    SEGGER_RTT_printf(0, "ble ser init tag5\n");
     advertising_init();
+    SEGGER_RTT_printf(0, "ble ser init tag6\n");
     // services
     qwr_init();
+    SEGGER_RTT_printf(0, "ble ser init tag7\n");
     dis_init();
+    SEGGER_RTT_printf(0, "ble ser init tag8\n");
 #ifdef BUTTONLESS_DFU
     dfu_init();
+    SEGGER_RTT_printf(0, "ble ser init tag9\n");
 #endif
     conn_params_init();
+    SEGGER_RTT_printf(0, "finish\n");
 }
