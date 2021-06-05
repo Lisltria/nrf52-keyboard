@@ -169,6 +169,7 @@ void app_error_log_handle(uint32_t id, uint32_t pc, uint32_t info);
                               LOCAL_ERR_CODE,               \
                               (uint8_t*)__FILE__,           \
                               __LINE__);                    \
+            SEGGER_RTT_printf(0, "\n");                     \
             APP_ERROR_HANDLER(LOCAL_ERR_CODE);              \
         }                                                   \
     } while (0)

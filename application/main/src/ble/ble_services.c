@@ -25,9 +25,11 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "ble_conn_state.h"
 #include "ble_dfu.h"
 #include "ble_dis.h"
+#include "ble_nus_c.h"
 #include "ble_srv_common.h"
 #include "nrf_ble_gatt.h"
 #include "nrf_ble_scan.h"
+#include "ble_db_discovery.h"
 #include "nrf_ble_qwr.h"
 #include "nrf_bootloader_info.h"
 #include "nrf_power.h"
@@ -45,6 +47,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "util.h"
 #include <string.h>
 #include "SEGGER_RTT.h"
+#include "nrf_log.h"
 
 #define PNP_ID_VENDOR_ID_SOURCE 0x02 /**< Vendor ID Source. */
 
@@ -78,6 +81,7 @@ NRF_BLE_SCAN_DEF(m_scan);   /**< Scanning Module instance. */
 NRF_BLE_GATT_DEF(m_gatt); /**< GATT module instance. */
 NRF_BLE_QWR_DEF(m_qwr); /**< Context for the Queued Write module.*/
 BLE_ADVERTISING_DEF(m_advertising); /**< Advertising module instance. */
+BLE_NUS_C_DEF(m_ble_nus_c);      /**< BLE Nordic UART Service (NUS) client instance. */
 
 static ble_uuid_t m_adv_uuids[] = { { BLE_UUID_HUMAN_INTERFACE_DEVICE_SERVICE, BLE_UUID_TYPE_BLE } };
 
@@ -333,6 +337,7 @@ static void scan_start(void)
 {
     ret_code_t err_code;
 
+    SEGGER_RTT_printf(0, "start scan_start\n");
     err_code = nrf_ble_scan_start(&m_scan);
     APP_ERROR_CHECK(err_code);
 
@@ -790,6 +795,7 @@ static void ble_evt_handler(ble_evt_t const* p_ble_evt, void* p_context)
         err_code = nrf_ble_qwr_conn_handle_assign(&m_qwr, m_conn_handle);
         APP_ERROR_CHECK(err_code);
         ble_conn_handle_change(m_conn_handle, p_ble_evt->evt.gap_evt.conn_handle);
+        SEGGER_RTT_printf(0, "EVT BLE_GAP_EVT_CONNECTED\n");
         break;
 
     case BLE_GAP_EVT_DISCONNECTED:
@@ -962,6 +968,7 @@ static void scan_evt_handler(scan_evt_t const * p_scan_evt)
 {
     ret_code_t err_code;
 
+    SEGGER_RTT_printf(0, "enter scan_evt_handler\n");
     switch(p_scan_evt->scan_evt_id)
     {
         case NRF_BLE_SCAN_EVT_CONNECTING_ERROR:
@@ -970,12 +977,33 @@ static void scan_evt_handler(scan_evt_t const * p_scan_evt)
             APP_ERROR_CHECK(err_code);
         } break;
 
+        case NRF_BLE_SCAN_EVT_CONNECTED:
+        {
+             ble_gap_evt_connected_t const * p_connected =
+                              p_scan_evt->params.connected.p_connected;
+            // Scan is automatically stopped by the connection.
+            NRF_LOG_INFO("Connecting to target %02x%02x%02x%02x%02x%02x",
+                     p_connected->peer_addr.addr[0],
+                     p_connected->peer_addr.addr[1],
+                     p_connected->peer_addr.addr[2],
+                     p_connected->peer_addr.addr[3],
+                     p_connected->peer_addr.addr[4],
+                     p_connected->peer_addr.addr[5]
+                     );
+        } break;
+
+        case NRF_BLE_SCAN_EVT_SCAN_TIMEOUT:
+        {
+            NRF_LOG_INFO("Scan timed out.");
+            scan_start();
+        } break;
+
         default:
             break;
     }
 }
 
-static const char m_target_periph_name[] = "Mitosis-Pip_64EAFB";
+static const char m_target_periph_name[] = "Mitosis-Pip-64EAFB";
 static void scan_init(void)
 {
     ret_code_t          err_code;
@@ -1002,32 +1030,74 @@ static void scan_init(void)
                                            false);
     APP_ERROR_CHECK(err_code);
 }
+
+static void ble_nus_c_evt_handler(ble_nus_c_t * p_ble_nus_c, ble_nus_c_evt_t const * p_ble_nus_evt)
+{
+    ret_code_t err_code;
+
+    switch (p_ble_nus_evt->evt_type)
+    {
+        case BLE_NUS_C_EVT_DISCOVERY_COMPLETE:
+            NRF_LOG_INFO("Discovery complete.");
+            err_code = ble_nus_c_handles_assign(p_ble_nus_c, p_ble_nus_evt->conn_handle, &p_ble_nus_evt->handles);
+            APP_ERROR_CHECK(err_code);
+
+            err_code = ble_nus_c_tx_notif_enable(p_ble_nus_c);
+            APP_ERROR_CHECK(err_code);
+            NRF_LOG_INFO("Connected to device with Nordic UART Service.");
+            break;
+
+        case BLE_NUS_C_EVT_NUS_TX_EVT:
+            NRF_LOG_INFO("Get nus text %d.\n", p_ble_nus_evt->p_data[0]);
+            break;
+
+        case BLE_NUS_C_EVT_DISCONNECTED:
+            NRF_LOG_INFO("Disconnected.");
+            scan_start();
+            break;
+    }
+}
+
+static void nus_c_init(void)
+{
+    ret_code_t       err_code;
+    ble_nus_c_init_t init;
+
+    init.evt_handler = ble_nus_c_evt_handler;
+
+    err_code = ble_nus_c_init(&m_ble_nus_c, &init);
+    APP_ERROR_CHECK(err_code);
+}
+
+static void db_disc_handler(ble_db_discovery_evt_t * p_evt)
+{
+    ble_nus_c_on_db_disc_evt(&m_ble_nus_c, p_evt);
+}
+
+static void db_discovery_init(void)
+{
+    ret_code_t err_code = ble_db_discovery_init(db_disc_handler);
+    APP_ERROR_CHECK(err_code);
+}
+
 #endif
 
 void ble_services_init()
 {
-    SEGGER_RTT_printf(0, "ble ser init tag1\n");
+    db_discovery_init();
     peer_manager_init();
-    SEGGER_RTT_printf(0, "ble ser init tag2\n");
 #ifdef ENABLE_SCAN
     scan_init();
-    SEGGER_RTT_printf(0, "ble ser init tag3\n");
 #endif
     gap_params_init();
-    SEGGER_RTT_printf(0, "ble ser init tag4\n");
     gatt_init();
-    SEGGER_RTT_printf(0, "ble ser init tag5\n");
+    nus_c_init();
     advertising_init();
-    SEGGER_RTT_printf(0, "ble ser init tag6\n");
     // services
     qwr_init();
-    SEGGER_RTT_printf(0, "ble ser init tag7\n");
     dis_init();
-    SEGGER_RTT_printf(0, "ble ser init tag8\n");
 #ifdef BUTTONLESS_DFU
     dfu_init();
-    SEGGER_RTT_printf(0, "ble ser init tag9\n");
 #endif
     conn_params_init();
-    SEGGER_RTT_printf(0, "finish\n");
 }
