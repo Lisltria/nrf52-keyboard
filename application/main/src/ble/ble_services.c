@@ -968,7 +968,7 @@ static void scan_evt_handler(scan_evt_t const * p_scan_evt)
 {
     ret_code_t err_code;
 
-    SEGGER_RTT_printf(0, "enter scan_evt_handler\n");
+    SEGGER_RTT_printf(0, "enter scan_evt_handler id = %d\n", p_scan_evt->scan_evt_id);
     switch(p_scan_evt->scan_evt_id)
     {
         case NRF_BLE_SCAN_EVT_CONNECTING_ERROR:

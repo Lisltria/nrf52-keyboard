@@ -145,10 +145,12 @@ static void adc_convert(void* context)
  */
 void adc_timer_start()
 {
+#ifdef NEED_ADC
     ret_code_t err_code;
 
     err_code = app_timer_start(adc_timer, ADC_TIMER_INTERVAL, NULL);
     APP_ERROR_CHECK(err_code);
+#endif
 }
 
 /**
