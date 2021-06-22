@@ -77,6 +77,7 @@ static pm_peer_id_t m_peer_id; /**< Device reference handle to the current bonde
 uint8_t switch_id = 0; /** 当前设备ID Device ID of currently in the eeconfig   */
 #endif
 
+BLE_DB_DISCOVERY_DEF(m_db_disc);                                        /**< Database discovery module instance. */
 NRF_BLE_SCAN_DEF(m_scan);   /**< Scanning Module instance. */
 NRF_BLE_GATT_DEF(m_gatt); /**< GATT module instance. */
 NRF_BLE_QWR_DEF(m_qwr); /**< Context for the Queued Write module.*/
@@ -794,6 +795,10 @@ static void ble_evt_handler(ble_evt_t const* p_ble_evt, void* p_context)
         m_conn_handle = p_ble_evt->evt.gap_evt.conn_handle;
         err_code = nrf_ble_qwr_conn_handle_assign(&m_qwr, m_conn_handle);
         APP_ERROR_CHECK(err_code);
+        err_code = ble_nus_c_handles_assign(&m_ble_nus_c, p_ble_evt->evt.gap_evt.conn_handle, NULL);
+        APP_ERROR_CHECK(err_code);
+        err_code = ble_db_discovery_start(&m_db_disc, p_ble_evt->evt.gap_evt.conn_handle);
+        APP_ERROR_CHECK(err_code);
         ble_conn_handle_change(m_conn_handle, p_ble_evt->evt.gap_evt.conn_handle);
         SEGGER_RTT_printf(0, "EVT BLE_GAP_EVT_CONNECTED\n");
         break;
@@ -1003,7 +1008,7 @@ static void scan_evt_handler(scan_evt_t const * p_scan_evt)
     }
 }
 
-static const char m_target_periph_name[] = "Mitosis-Pip-64EAFB";
+static const char m_target_periph_name[] = "Mitosis-Pip-Right";
 static void scan_init(void)
 {
     ret_code_t          err_code;
@@ -1038,7 +1043,7 @@ static void ble_nus_c_evt_handler(ble_nus_c_t * p_ble_nus_c, ble_nus_c_evt_t con
     switch (p_ble_nus_evt->evt_type)
     {
         case BLE_NUS_C_EVT_DISCOVERY_COMPLETE:
-            NRF_LOG_INFO("Discovery complete.");
+            SEGGER_RTT_printf(0, "Discovery complete.");
             err_code = ble_nus_c_handles_assign(p_ble_nus_c, p_ble_nus_evt->conn_handle, &p_ble_nus_evt->handles);
             APP_ERROR_CHECK(err_code);
 
@@ -1048,7 +1053,11 @@ static void ble_nus_c_evt_handler(ble_nus_c_t * p_ble_nus_c, ble_nus_c_evt_t con
             break;
 
         case BLE_NUS_C_EVT_NUS_TX_EVT:
-            NRF_LOG_INFO("Get nus text %d.\n", p_ble_nus_evt->p_data[0]);
+            SEGGER_RTT_printf(0, "Get nus text %x%x%x%x.\n",
+                    p_ble_nus_evt->p_data[0],
+                    p_ble_nus_evt->p_data[1],
+                    p_ble_nus_evt->p_data[2],
+                    p_ble_nus_evt->p_data[3]);
             break;
 
         case BLE_NUS_C_EVT_DISCONNECTED:
