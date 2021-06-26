@@ -43,6 +43,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // 实际的消抖次数
 #define DEBOUNCE_RELOAD ((DEBOUNCE + KEYBOARD_SCAN_INTERVAL - 1) / KEYBOARD_SCAN_INTERVAL)
 
+extern uint32_t the_other_board;
 static uint8_t debouncing = DEBOUNCE_RELOAD;
 
 /* matrix state(1:on, 0:off) */
@@ -196,6 +197,8 @@ uint8_t matrix_scan(void)
 #endif
     }
 
+    matrix_debouncing[MATRIX_ROWS - 1] = the_other_board;
+
     if (debouncing) {
         if (--debouncing) {
             // no need to delay here manually, because we use the clock.
@@ -206,6 +209,8 @@ uint8_t matrix_scan(void)
             }
         }
     }
+
+    matrix[1] = the_other_board;
 
     return 1;
 }
