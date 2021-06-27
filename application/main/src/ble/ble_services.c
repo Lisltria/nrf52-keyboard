@@ -67,7 +67,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 /*lint -emacro(524, MIN_CONN_INTERVAL) // Loss of precision */
 #define MIN_CONN_INTERVAL MSEC_TO_UNITS(7.5, UNIT_1_25_MS) /**< Minimum connection interval (7.5 ms) */
 #define MAX_CONN_INTERVAL MSEC_TO_UNITS(30, UNIT_1_25_MS) /**< Maximum connection interval (30 ms). */
-#define SLAVE_LATENCY 6 /**< Slave latency. */
+#define SLAVE_LATENCY 0 /**< Slave latency. */
 #define CONN_SUP_TIMEOUT MSEC_TO_UNITS(430, UNIT_10_MS) /**< Connection supervisory timeout (430 ms). */
 
 uint16_t m_conn_handle = BLE_CONN_HANDLE_INVALID; /**< Handle of the current connection. */
@@ -119,7 +119,6 @@ static void identities_set(pm_peer_id_list_skip_t skip)
     APP_ERROR_CHECK(err_code);
 
     err_code = pm_device_identities_list_set(peer_ids, peer_id_count);
-    APP_ERROR_CHECK(err_code);
 }
 
 static void ble_disconnect()
@@ -497,7 +496,7 @@ static void pm_evt_handler(pm_evt_t const* p_evt)
         break;
 
     case PM_EVT_PEERS_DELETE_SUCCEEDED:
-        advertising_start(false);
+        advertising_restart(BLE_ADV_MODE_FAST, false);
         break;
 
     case PM_EVT_PEER_DATA_UPDATE_SUCCEEDED:
@@ -904,6 +903,7 @@ static void ble_evt_handler(ble_evt_t const* p_ble_evt, void* p_context)
             NRF_LOG_ERROR("main Disconnected. conn_handle: 0x%x, reason: 0x%x",
                          p_gap_evt->conn_handle,
                          p_gap_evt->params.disconnected.reason);
+        //advertising_restart(BLE_ADV_MODE_FAST, false);
         break; // BLE_GAP_EVT_DISCONNECTED
 
     case BLE_GAP_EVT_PHY_UPDATE_REQUEST: {
