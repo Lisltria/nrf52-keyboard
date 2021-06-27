@@ -110,9 +110,9 @@ extern "C" {
  */
 
 #define NRF_LOG_ERROR(...)                     SEGGER_RTT_printf(0, __VA_ARGS__);SEGGER_RTT_printf(0, "\n") //NRF_LOG_INTERNAL_ERROR(__VA_ARGS__)
-#define NRF_LOG_WARNING(...)                   SEGGER_RTT_printf(0, __VA_ARGS__);SEGGER_RTT_printf(0, "\n")//NRF_LOG_INTERNAL_WARNING( __VA_ARGS__)
-#define NRF_LOG_INFO(...)                      SEGGER_RTT_printf(0, __VA_ARGS__);SEGGER_RTT_printf(0, "\n")// NRF_LOG_INTERNAL_INFO( __VA_ARGS__)
-#define NRF_LOG_DEBUG(...)                     SEGGER_RTT_printf(0, __VA_ARGS__);SEGGER_RTT_printf(0, "\n")// NRF_LOG_INTERNAL_DEBUG( __VA_ARGS__)
+#define NRF_LOG_WARNING(...)                   NRF_LOG_INTERNAL_WARNING( __VA_ARGS__)
+#define NRF_LOG_INFO(...)                      NRF_LOG_INTERNAL_INFO( __VA_ARGS__)
+#define NRF_LOG_DEBUG(...)                     NRF_LOG_INTERNAL_DEBUG( __VA_ARGS__)
 
 /** @def NRF_LOG_INST_ERROR
  *  @brief Macro for logging error messages for a given module instance. It takes a printf-like, formatted

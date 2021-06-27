@@ -903,7 +903,7 @@ static void ble_evt_handler(ble_evt_t const* p_ble_evt, void* p_context)
             NRF_LOG_ERROR("main Disconnected. conn_handle: 0x%x, reason: 0x%x",
                          p_gap_evt->conn_handle,
                          p_gap_evt->params.disconnected.reason);
-        //advertising_restart(BLE_ADV_MODE_FAST, false);
+        advertising_restart(BLE_ADV_MODE_FAST, false);
         break; // BLE_GAP_EVT_DISCONNECTED
 
     case BLE_GAP_EVT_PHY_UPDATE_REQUEST: {
