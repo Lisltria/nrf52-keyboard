@@ -1033,10 +1033,8 @@ static void advertising_init(void)
     init.advdata.flags = adv_flags;
     init.advdata.uuids_complete.uuid_cnt = sizeof(m_adv_uuids) / sizeof(m_adv_uuids[0]);
     init.advdata.uuids_complete.p_uuids = m_adv_uuids;
-#ifdef HIGH_TX_POWER
-    int8_t tx_power_level = 4;
+    int8_t tx_power_level = -20;
     init.advdata.p_tx_power_level = &tx_power_level;
-#endif
     advertising_config_get(&init.config);
 
     init.evt_handler = on_adv_evt;
@@ -1046,11 +1044,9 @@ static void advertising_init(void)
     APP_ERROR_CHECK(err_code);
 
     ble_advertising_conn_cfg_tag_set(&m_advertising, APP_BLE_CONN_CFG_TAG);
-#ifdef HIGH_TX_POWER
     //更改发射功率到+4dBm
-    err_code = sd_ble_gap_tx_power_set(BLE_GAP_TX_POWER_ROLE_ADV, m_advertising.adv_handle, 4);
+    err_code = sd_ble_gap_tx_power_set(BLE_GAP_TX_POWER_ROLE_ADV, m_advertising.adv_handle, -20);
     APP_ERROR_CHECK(err_code);
-#endif
 }
 
 void ble_passkey_send(uint8_t const* p_key)
