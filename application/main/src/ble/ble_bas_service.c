@@ -70,7 +70,7 @@ static void bas_init(void)
 
 static void calculate_battery_persentage(struct BatteryInfo* info)
 {
-    if (info->voltage >= 4100)
+    if (info->voltage >= 4020)
         info->percentage = 100;
     else if (info->voltage >= 3335)
         info->percentage = 15 + (info->voltage - 3335) / 9;
@@ -94,7 +94,8 @@ static void adc_result_handler(nrf_saadc_value_t value)
         // RESULT = [V(P) – V(N) ] * GAIN/REFERENCE * 2 ^ (RESOLUTION - m)
         // value  = V_in / 1.2 * 1024
         // V_in   = V_bat * 2.2 / 12.2
-        battery_info.voltage = result * 1200 * 122 / 1024 / 22;
+        battery_info.voltage = result * 49 / 10;
+        SEGGER_RTT_printf(0, "battery_info complete. %d\n", battery_info.voltage);
         calculate_battery_persentage(&battery_info);
         battery_level_update(battery_info.percentage);
     }
@@ -103,7 +104,7 @@ static void adc_result_handler(nrf_saadc_value_t value)
 static nrf_saadc_channel_config_t channel_config = {
     .resistor_p = NRF_SAADC_RESISTOR_DISABLED,
     .resistor_n = NRF_SAADC_RESISTOR_DISABLED,
-    .gain = NRF_SAADC_GAIN1_2,
+    .gain = NRF_SAADC_GAIN1_6,
     .reference = NRF_SAADC_REFERENCE_INTERNAL,
     .acq_time = NRF_SAADC_ACQTIME_10US,
     .mode = NRF_SAADC_MODE_SINGLE_ENDED,

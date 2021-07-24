@@ -117,24 +117,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define PIN_STANDBY !UCC2 // CH554的充电检测。当UCC2拉低时表示充电完成。若不配置则只使用PIN_CHARGING作为是否充电的检测标志
 
 // 按键阵列配置
-// Right
-#ifndef LEFT_PART
-static const uint8_t row_pin_array[MATRIX_ROWS] = { 25, 25 };
-static const uint8_t column_pin_array[MATRIX_COLS] = { 2,  3,  4,  5,  6,
-                                                       7,  8,  9, 10, 11,
-                                                      13, 14, 15, 16, 17,
-                                                      18, 19, 26, 27, 28,
-                                                      29, 30, 31};
-#else
-// Left
 static const uint8_t row_pin_array[MATRIX_ROWS] = { 19, 19  };
 static const uint8_t column_pin_array[MATRIX_COLS] = { 2,  3,  4,  5,  6,
                                                        7,  8,  9, 10, 11,
-                                                      12, 13, 14, 15, 16,
-                                                      17, 25, 26, 27, 28,
-                                                      29, 30, 19};
-#endif
+                                                      12, 13, 15, 16, 17,
+                                                      18, 19, 25, 26, 27,
+                                                      28, 29, 30};
 #define ROW_IN // 键盘阵列的二极管方向是从COL->ROW
 #define NOT_MATRIX
 #define ENABLE_SCAN
 #define NRF_LOG_USES_RTT 1
+#define NEED_ADC

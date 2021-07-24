@@ -65,10 +65,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #define APP_ADV_SLOW_DURATION 18000 /**< The advertising duration of slow advertising in units of 10 milliseconds. */
 
 /*lint -emacro(524, MIN_CONN_INTERVAL) // Loss of precision */
-#define MIN_CONN_INTERVAL MSEC_TO_UNITS(7.5, UNIT_1_25_MS) /**< Minimum connection interval (7.5 ms) */
-#define MAX_CONN_INTERVAL MSEC_TO_UNITS(30, UNIT_1_25_MS) /**< Maximum connection interval (30 ms). */
+#define MIN_CONN_INTERVAL MSEC_TO_UNITS(20, UNIT_1_25_MS) /**< Minimum connection interval (7.5 ms) */
+#define MAX_CONN_INTERVAL MSEC_TO_UNITS(75, UNIT_1_25_MS) /**< Maximum connection interval (30 ms). */
 #define SLAVE_LATENCY 0 /**< Slave latency. */
-#define CONN_SUP_TIMEOUT MSEC_TO_UNITS(430, UNIT_10_MS) /**< Connection supervisory timeout (430 ms). */
+#define CONN_SUP_TIMEOUT MSEC_TO_UNITS(4000, UNIT_10_MS) /**< Connection supervisory timeout (430 ms). */
 
 uint16_t m_conn_handle = BLE_CONN_HANDLE_INVALID; /**< Handle of the current connection. */
 static pm_peer_id_t m_peer_id; /**< Device reference handle to the current bonded central. */
@@ -900,7 +900,7 @@ static void ble_evt_handler(ble_evt_t const* p_ble_evt, void* p_context)
         ble_conn_handle_change(m_conn_handle, BLE_CONN_HANDLE_INVALID);
         m_conn_handle = BLE_CONN_HANDLE_INVALID;
         trig_event_param(USER_EVT_BLE_STATE_CHANGE, BLE_STATE_DISCONNECT);
-            NRF_LOG_ERROR("main Disconnected. conn_handle: 0x%x, reason: 0x%x",
+        NRF_LOG_ERROR("main Disconnected. conn_handle: 0x%x, reason: 0x%x",
                          p_gap_evt->conn_handle,
                          p_gap_evt->params.disconnected.reason);
         advertising_restart(BLE_ADV_MODE_FAST, false);
