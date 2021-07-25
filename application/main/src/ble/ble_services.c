@@ -65,10 +65,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #define APP_ADV_SLOW_DURATION 18000 /**< The advertising duration of slow advertising in units of 10 milliseconds. */
 
 /*lint -emacro(524, MIN_CONN_INTERVAL) // Loss of precision */
-#define MIN_CONN_INTERVAL MSEC_TO_UNITS(20, UNIT_1_25_MS) /**< Minimum connection interval (7.5 ms) */
-#define MAX_CONN_INTERVAL MSEC_TO_UNITS(75, UNIT_1_25_MS) /**< Maximum connection interval (30 ms). */
-#define SLAVE_LATENCY 0 /**< Slave latency. */
-#define CONN_SUP_TIMEOUT MSEC_TO_UNITS(4000, UNIT_10_MS) /**< Connection supervisory timeout (430 ms). */
+#define MIN_CONN_INTERVAL MSEC_TO_UNITS(7.5, UNIT_1_25_MS) /**< Minimum connection interval (7.5 ms) */
+#define MAX_CONN_INTERVAL MSEC_TO_UNITS(30, UNIT_1_25_MS) /**< Maximum connection interval (30 ms). */
+#define SLAVE_LATENCY 6 /**< Slave latency. */
+#define CONN_SUP_TIMEOUT MSEC_TO_UNITS(430, UNIT_10_MS) /**< Connection supervisory timeout (430 ms). */
 
 uint16_t m_conn_handle = BLE_CONN_HANDLE_INVALID; /**< Handle of the current connection. */
 static pm_peer_id_t m_peer_id; /**< Device reference handle to the current bonded central. */
@@ -78,6 +78,7 @@ uint8_t switch_id = 0; /** 当前设备ID Device ID of currently in the eeconfig
 #endif
 
 uint32_t the_other_board;
+uint32_t this_board;
 BLE_DB_DISCOVERY_DEF(m_db_disc);                                        /**< Database discovery module instance. */
 NRF_BLE_SCAN_DEF(m_scan);   /**< Scanning Module instance. */
 NRF_BLE_GATT_DEF(m_gatt); /**< GATT module instance. */
@@ -345,6 +346,7 @@ static void scan_start(void)
     APP_ERROR_CHECK(err_code);
 
 }
+
 #endif
 
 /**
@@ -900,7 +902,7 @@ static void ble_evt_handler(ble_evt_t const* p_ble_evt, void* p_context)
         ble_conn_handle_change(m_conn_handle, BLE_CONN_HANDLE_INVALID);
         m_conn_handle = BLE_CONN_HANDLE_INVALID;
         trig_event_param(USER_EVT_BLE_STATE_CHANGE, BLE_STATE_DISCONNECT);
-        NRF_LOG_ERROR("main Disconnected. conn_handle: 0x%x, reason: 0x%x",
+        NRF_LOG_ERROR("HOST Disconnected. conn_handle: 0x%x, reason: 0x%x",
                          p_gap_evt->conn_handle,
                          p_gap_evt->params.disconnected.reason);
         advertising_restart(BLE_ADV_MODE_FAST, false);
@@ -1020,6 +1022,7 @@ static void ble_advertising_error_handler(uint32_t nrf_error)
 /**
  * @brief Function for initializing the Advertising functionality.
  */
+#define HIGH_TX_POWER
 static void advertising_init(void)
 {
     uint32_t err_code;
@@ -1033,8 +1036,10 @@ static void advertising_init(void)
     init.advdata.flags = adv_flags;
     init.advdata.uuids_complete.uuid_cnt = sizeof(m_adv_uuids) / sizeof(m_adv_uuids[0]);
     init.advdata.uuids_complete.p_uuids = m_adv_uuids;
-    int8_t tx_power_level = -20;
+#ifdef HIGH_TX_POWER
+    int8_t tx_power_level = 4;
     init.advdata.p_tx_power_level = &tx_power_level;
+#endif
     advertising_config_get(&init.config);
 
     init.evt_handler = on_adv_evt;
@@ -1044,9 +1049,11 @@ static void advertising_init(void)
     APP_ERROR_CHECK(err_code);
 
     ble_advertising_conn_cfg_tag_set(&m_advertising, APP_BLE_CONN_CFG_TAG);
+#ifdef HIGH_TX_POWER
     //更改发射功率到+4dBm
-    err_code = sd_ble_gap_tx_power_set(BLE_GAP_TX_POWER_ROLE_ADV, m_advertising.adv_handle, -20);
+    err_code = sd_ble_gap_tx_power_set(BLE_GAP_TX_POWER_ROLE_ADV, m_advertising.adv_handle, 4);
     APP_ERROR_CHECK(err_code);
+#endif
 }
 
 void ble_passkey_send(uint8_t const* p_key)
@@ -1092,7 +1099,6 @@ static void scan_evt_handler(scan_evt_t const * p_scan_evt)
         case NRF_BLE_SCAN_EVT_SCAN_TIMEOUT:
         {
             NRF_LOG_INFO("Scan timed out.");
-            scan_start();
         } break;
 
         default:
@@ -1154,6 +1160,7 @@ static void ble_nus_c_evt_handler(ble_nus_c_t * p_ble_nus_c, ble_nus_c_evt_t con
 
         case BLE_NUS_C_EVT_DISCONNECTED:
             NRF_LOG_INFO("Disconnected.");
+            the_other_board = 0;
             scan_start();
             break;
     }

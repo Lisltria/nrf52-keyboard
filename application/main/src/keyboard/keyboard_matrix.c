@@ -44,6 +44,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #define DEBOUNCE_RELOAD ((DEBOUNCE + KEYBOARD_SCAN_INTERVAL - 1) / KEYBOARD_SCAN_INTERVAL)
 
 extern uint32_t the_other_board;
+extern uint32_t this_board;
 static uint8_t debouncing = DEBOUNCE_RELOAD;
 
 /* matrix state(1:on, 0:off) */
@@ -208,6 +209,7 @@ uint8_t matrix_scan(void)
         }
     }
     matrix[1] = the_other_board;
+    this_board = matrix[0];
 
     return 1;
 }
