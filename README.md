@@ -1,81 +1,19 @@
-# nrf52-keyboard
-![Build Status](https://api.travis-ci.org/Lotlab/nrf52-keyboard.svg?branch=master)
+## 写在最前：Mitosis-Pro
 
-## Overview
+由于出差需求，需要便携的分体式键盘，ergodone太大了，mitosis比较符合需求
+mitosis 键盘是一个伟大的设计，配合<s>嘉立创免费打样</s>,可以轻松将硬件成本限制在200RMB。但是过于简陋。
+本版本的 mitosis 键盘增加了如下特性：
 
-This is a TMK based keyboard firmware for nRF52 series, now support both nRF52810 and nRF52832. Firmware for nRF51822 see [here](https://github.com/Lotlab/nrf51822-keyboard).
+-标配200mAh锂电（当然如果焊一个大容量电池也没问题），代替原设计的2032纽扣电池，不再需要麻烦地换电池；
+-带有充放电管理模块，整机工作电流约0.8mA(左手主控), 0.67mA（右手主控）
+-使用nrf52832主控，集成tmk键盘固件，支持dfu功能，相比原版mitosis节省了一个接收器
+-带有硬件开关，关机更省电
+-TYPE-C充电口，支持jlink调试
 
-## Directory Structure
-
-- application: contians the bootloader and application for nrf52
-  - main: main program for nrf52
-    - src: source
-      - ble: bluetooth related code 
-      - config: sdk config
-      - driver: driver for peripheral device
-      - keyboard: keyboard logic 
-      - protocol: communication protocol
-      - tmk: tmk adaptor
-    - project
-  - bootloader: bootloader for nrf52
-    - project
-- doc: documents
-- keyboard: keyboard config 
-- SDK: directory for placing nrf SDK
-- template: nrf SDK makefile template
-- tmk: tmk source code
-- usb: code for ch554
-
-## Code Branch
-
-- Master: is not stable, may contains some critical bug.
-- Develop: is not stable, including some unfinished feature, may not pass compile.
-
-If you want to use this project in your major keyboard, please see the Release page.
-
-## Highlights
-
-- BLE/USB dual mode
-- USB NKRO
-- Macro support
-- Dynamic keymap/macro configuration
-- Battery level upload
-- Mousekey and media key support
-- Low power comsumption. (~200ua when all LED off in Lot60-BLE)
-- Support rotary encoder and other peripheral device (see driver directory)
-- Highly customable event system
-
-## Hardware supporting
-
-Currently we support both nRF52810 and nRF52832. See keyboard directory for more information.
-
-## Compile
-
-Firstly, you should download [nRF5 SDK 15.3](https://www.nordicsemi.com/Software-and-Tools/Software/nRF5-SDK/Download#infotabs), decompress it and put it into the SDK folder. The structure of SDK folder will be `SDK/components`, ...
-
-And then, install `gcc-arm-none-eabi-7-2018-q2-update`. Copy the `Makefile.posix.template` or `Makefile.windows.template` to `Makefile.posix` or `Makefile.windows` (depending your OS), then modify the toolchain path in the file to your gcc installed path.
-
-Install [SDCC](http://sdcc.sourceforge.net/) to compile code for CH554.
-
-If you want to compile the bootloader, you should firstly complie the uECC library. See this [article](https://devzone.nordicsemi.com/b/blog/posts/getting-started-with-nordics-secure-dfu-bootloader).
-
-Then, 
-```bash
-cd keyboard/lot60-ble
-make # Compile main program and the USB program
-make bootloader # Compile bootloader
-```
-
-## Flashing
-
-It's recommend to use DAP-Link to flashing nrf52 chip. If you want to do so, please install [pyocd](https://github.com/mbedmicro/pyOCD). If you want to generate DFU package, you should install [nrfutil](https://github.com/NordicSemiconductor/pc-nrfutil/).
-
-For ch554, you could use the official [flasing utility](http://www.wch.cn/downloads/WCHISPTool_Setup_exe.html) in windows, or third-party [usbisp](https://github.com/rgwan/librech551) in linux.
-
-Type `make help` for all flashing command.
+最后感谢nrf52-keyboard项目的支持，后续内容为相关的编译和配置，本文的项目为 mitosis-pro
+![Mitosis-pro](https://github.com/Lisltria/nrf52-mitosis-pro/blob/Mitosis-Pip-Master-dev/mitosis.jpg)
 
 ## 概述
-
 这是一个基于nrf52蓝牙键盘的固件，使用了nRF SDK 15.3作为底层硬件驱动，并使用TMK键盘库作为键盘功能的上部实现。
 
 ## 目录结构
@@ -155,7 +93,7 @@ make bootloader # 编译bootloader
 
 ### 详细教程
 
-如果对上面的固件编译流程有问题，可参考Lotlab Wiki上的[这篇文章](https://wiki.lotlab.org/page/bluetooth/build-guide/)，或查看`.travis.yml`作为参考。
+如果对上面的固件编译流程有问题，可参考Lotlab Wiki上的[这篇文章](https://wiki.lotlab.org/ble/upgrade.html)，或查看`.travis.yml`作为参考。
 
 ## 硬件移植
 请参考Keyboard目录下的template移植模板，并查看doc目录下的对应说明。
